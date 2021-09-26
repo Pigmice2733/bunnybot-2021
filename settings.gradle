@@ -1,6 +1,10 @@
 import org.gradle.internal.os.OperatingSystem
 
+
+
 pluginManagement {
+    rootProject.name = 'bunnybot-2021'
+    include 'robolib'
     repositories {
         mavenLocal()
         gradlePluginPortal()

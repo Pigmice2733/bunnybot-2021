@@ -4,9 +4,20 @@
 
 package com.pigmice.frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+import java.io.FileInputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import com.pigmice.frc.robot.subsystems.Drivetrain;
-import com.pigmice.frc.robot.motorconfig.CTRE;
+import com.pigmice.frc.robot.subsystems.ISubsystem;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -15,66 +26,97 @@ import com.pigmice.frc.robot.motorconfig.CTRE;
  * project.
  */
 public class Robot extends TimedRobot {
-  ControlScheme controls;
-  Drivetrain drivetrain;
+  private Drivetrain drivetrain;
 
-  ComponentLogger robotLogger = Logger.createComponent("Robot");
+    private final List<ISubsystem> subsystems = new ArrayList<>();
 
-  @Override
-  public void robotInit() {
-    controls = new ControlScheme();
+    private final Controls controls = new Controls();
 
-    AHRS navx = new AHRS(SPI.Port.kMXP);
+    private double testStartTime;
 
-    configureDrivetrain(3, 1, 4, 2, navx);
+    @Override
+    public void robotInit() {
+        displayDeployTimestamp();
 
-    URI driverStation;
-    try {
-      driverStation = new URI("ws://10.27.33.5:8181/log");
-    } catch (URISyntaxException e) {
-      throw new RuntimeException("Misformatted driver station URI");
+        drivetrain = Drivetrain.getInstance();
+
+        subsystems.add(drivetrain);
+
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
     }
 
-    Logger.configure(driverStation);
-    Logger.start();
+    @Override
+    public void autonomousInit() {
+        drivetrain.setCoastMode(false);
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+    }
 
-    robotLogger.info("Robot code started!");
-  }
+    @Override
+    public void autonomousPeriodic() {
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
 
-  @Override
-  public void autonomousInit() {}
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+    }
 
-  @Override
-  public void autonomousPeriodic() {}
+    @Override
+    public void teleopInit() {
+        drivetrain.setCoastMode(false);
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+    }
 
-  @Override
-  public void teleopInit() {
-    robotLogger.info("Teleop init");
+    @Override
+    public void teleopPeriodic() {
+      controls.update();
 
-    superStructure.initialize(superStructer.getPose());
-  }
+      drivetrain.arcadeDrive(controls.driveSpeed(), controls.turnSpeed());
 
-  @Override
-  public void teleopPeriodic() {
-    gamePeriodic();
-  }
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+    }
 
-  private void gamePeriodic() {
-    drivetrain.arcadeDrive(controls.drive(), controls.steer());
-  }
+    @Override
+    public void testInit() {
+        testStartTime = Timer.getFPGATimestamp();
+    }
 
-  private void configureDrivetrain(int frontLeft, int frontRight, int backLeft, int backRight, AHRS navx) {
-    TalonSRX leftDrive = new TalonSRX(frontLeft), rightDrive = new TalonSRX(frontRight);
-    CTRE.configureDriveMotor(leftDrive);
-    CTRE.configureDriveMotor(rightDrive);
-    
-    rightDrive.setInverted(true);
+    @Override
+    public void testPeriodic() {
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.test(Timer.getFPGATimestamp() - testStartTime));
+    }
 
-    VictorSPX leftFollower = new VictorSPX(backLeft), rightFollower = new VictorSPX(backRight);
+    @Override
+    public void disabledInit() {
+        drivetrain.setCoastMode(true);
+    }
 
-    CTRE.configureFollowerMotor(leftFollower, leftDrive);
-    CTRE.configureFollowerMotor(rightFollower, rightDrive);
+    @Override
+    public void disabledPeriodic() {
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
+        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+    }
 
-    drivetrain = new Drivetrain(leftDrive, rightDrive, navx, 2);
-  }
+    @Override
+    public void robotPeriodic() {
+      
+    }
+
+    private void displayDeployTimestamp() {
+        FileInputStream file;
+        Properties properties = new Properties();
+
+        NetworkTableEntry timestampDisplay = Shuffleboard.getTab(Dashboard.developmentTabName)
+                .add("Deploy Timestamp", "none").withSize(2, 1).withPosition(Dashboard.deployTimestampPosition, 0)
+                .getEntry();
+
+        try {
+            Path filePath = Filesystem.getDeployDirectory().toPath().resolve("deployTimestamp.properties");
+            file = new FileInputStream(filePath.toFile());
+            properties.load(file);
+        } catch (Exception e) {
+            return;
+        }
+
+        timestampDisplay.forceSetString(properties.getProperty("DEPLOY_TIMESTAMP"));
+    }
 }
