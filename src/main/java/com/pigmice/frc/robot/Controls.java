@@ -21,7 +21,8 @@ public class Controls {
 
         @Override
         public double driveSpeed() {
-            return joystick.getY(Hand.kLeft);
+            double value = joystick.getY(Hand.kLeft);
+            return Math.abs(value) < 0.2 ? 0 : value / 4;
         }
 
         @Override
@@ -39,7 +40,8 @@ public class Controls {
 
         @Override
         public double driveSpeed() {
-            return joystick.getY(Hand.kLeft);
+            double value = joystick.getY(Hand.kLeft);
+            return Math.abs(value) < 0.2 ? 0 : value / 4;
         }
 
         @Override
@@ -49,11 +51,6 @@ public class Controls {
     }
 
     DriverProfile driver;
-
-    Debouncer debouncer;
-    Toggle hoodToggle;
-    Debouncer down;
-    Debouncer up;
 
     public Controls() {
         XboxController driverJoystick = new XboxController(0);
@@ -65,17 +62,13 @@ public class Controls {
         } else {
             driver = new XBox(driverJoystick);
         }
-        hoodToggle = new Toggle(debouncer);
     }
 
     public void initialize() {
     }
 
     public void update() {
-        debouncer.update();
-        hoodToggle.update();
-        up.update();
-        down.update();
+        
     }
 
     public double turnSpeed() {
@@ -85,13 +78,5 @@ public class Controls {
 
     public double driveSpeed() {
         return -driver.driveSpeed();
-    }
-    
-    public boolean speedUp() {
-        return up.get();
-    }
-
-    public boolean speedDown() {
-        return down.get();
     }
 }
