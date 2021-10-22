@@ -9,7 +9,12 @@ import edu.wpi.first.wpilibj.XboxController;
 public class Controls {
     private interface DriverProfile {
         double driveSpeed();
+
         double turnSpeed();
+        
+        double getLeft();
+
+        double getRight();
     }
 
     private class EasySMX implements DriverProfile {
@@ -21,13 +26,22 @@ public class Controls {
 
         @Override
         public double driveSpeed() {
-            double value = joystick.getY(Hand.kLeft);
-            return Math.abs(value) < 0.2 ? 0 : value / 4;
+            return getLeft();
         }
 
         @Override
         public double turnSpeed() {
             return joystick.getX(Hand.kRight);
+        }
+
+        @Override
+        public double getLeft() {
+            return joystick.getY(Hand.kLeft);
+        }
+
+        @Override
+        public double getRight() {
+            return joystick.getY(Hand.kRight);
         }
     }
 
@@ -40,13 +54,22 @@ public class Controls {
 
         @Override
         public double driveSpeed() {
-            double value = joystick.getY(Hand.kLeft);
-            return Math.abs(value) < 0.2 ? 0 : value / 4;
+            return getLeft();
         }
 
         @Override
         public double turnSpeed() {
             return joystick.getX(Hand.kRight);
+        }
+
+        @Override
+        public double getLeft() {
+            return joystick.getY(Hand.kLeft);
+        }
+
+        @Override
+        public double getRight() {
+            return joystick.getY(Hand.kRight);
         }
     }
 
@@ -73,10 +96,20 @@ public class Controls {
 
     public double turnSpeed() {
         final double steering = driver.turnSpeed();
-        return Math.pow(steering, 2) * Math.signum(steering);
+        return steering / 4;
     }
 
     public double driveSpeed() {
-        return -driver.driveSpeed();
+        double value = driver.driveSpeed();
+        return Math.abs(value) < 0.2 ? 0 : -value / 4;
     }
+
+    public double leftSpeed() {
+        return -driver.getLeft();
+    }
+
+    public double rightSpeed() {
+        return -driver.getRight();
+    }
+
 }
