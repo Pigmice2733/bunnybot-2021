@@ -10,6 +10,7 @@ public class Controls {
     private interface DriverProfile {
         double driveSpeed();
         double turnSpeed();
+        boolean getAButton();
     }
 
     private class EasySMX implements DriverProfile {
@@ -27,7 +28,12 @@ public class Controls {
 
         @Override
         public double turnSpeed() {
-            return joystick.getX(Hand.kRight);
+            return joystick.getX(Hand.kRight) / 2;
+        }
+
+        @Override 
+        public boolean getAButton() {
+            return joystick.getAButtonPressed();
         }
     }
 
@@ -46,7 +52,12 @@ public class Controls {
 
         @Override
         public double turnSpeed() {
-            return joystick.getX(Hand.kRight);
+            return joystick.getX(Hand.kRight) / 2;
+        }
+
+        @Override
+        public boolean getAButton() {
+            return joystick.getAButtonPressed();
         }
     }
 
@@ -78,5 +89,9 @@ public class Controls {
 
     public double driveSpeed() {
         return -driver.driveSpeed();
+    }
+
+    public boolean getAButton() {
+        return driver.getAButton();
     }
 }
