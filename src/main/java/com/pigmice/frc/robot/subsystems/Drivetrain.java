@@ -52,6 +52,8 @@ public class Drivetrain implements ISubsystem {
         leftFollower.follow(leftDrive);
         rightFollower.follow(rightDrive);
 
+        // setCoastMode(true);
+
         navx = new AHRS(DrivetrainConfiguration.navxPort);
 
         ShuffleboardLayout testReportLayout = Shuffleboard.getTab(Dashboard.systemsTestTabName)
@@ -146,6 +148,10 @@ public class Drivetrain implements ISubsystem {
 
         leftDemand = leftSpeed;
         rightDemand = rightSpeed;
+    }
+
+    public void swerveDrive(double forward, double strafe, double rotation_x) {
+
     }
 
     public void stop() {

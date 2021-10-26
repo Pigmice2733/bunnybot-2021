@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.pigmice.frc.robot.autonomous.Autonomous;
+import com.pigmice.frc.robot.autonomous.LeaveLine;
 import com.pigmice.frc.robot.subsystems.Drivetrain;
 import com.pigmice.frc.robot.subsystems.ISubsystem;
 import com.revrobotics.ColorSensorV3;
@@ -37,6 +39,10 @@ public class Robot extends TimedRobot {
 
     private final Controls controls = new Controls();
 
+    private List<Autonomous> autoRoutines = new ArrayList<>();
+    private Autonomous autonomous;
+
+
     private double testStartTime;
 
     // Color Senosr
@@ -62,17 +68,25 @@ public class Robot extends TimedRobot {
 
         // Pneumatics
         
+        autoRoutines.add(new LeaveLine(drivetrain));
+
+        Autonomous.setOptions(autoRoutines);
     }
 
     @Override
     public void autonomousInit() {
         drivetrain.setCoastMode(false);
         subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+
+        autonomous = Autonomous.getSelected();
+        autonomous.initialize();
     }
 
     @Override
     public void autonomousPeriodic() {
         subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
+
+        autonomous.update();
 
         subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
         subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
