@@ -189,4 +189,8 @@ public class Drivetrain implements ISubsystem {
         leftFollower.setIdleMode(newMode);
         rightFollower.setIdleMode(newMode);
     }
+
+    public void resetPose() {
+        this.odometry.set(new Pose(0, 0, getPose().getHeading()), 0.0, 0.0);
+    }
 }

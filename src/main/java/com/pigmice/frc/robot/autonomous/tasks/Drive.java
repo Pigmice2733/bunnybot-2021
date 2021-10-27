@@ -9,6 +9,7 @@ import com.pigmice.frc.lib.utils.Range;
 import com.pigmice.frc.robot.subsystems.Drivetrain;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive implements ITask {
     private ProfileExecutor executor;
@@ -26,12 +27,17 @@ public class Drive implements ITask {
 
         reverse = meters < 0.0;
 
+        SmartDashboard.putNumber("Initial Distance", meters);
+        SmartDashboard.putBoolean("Reverse", reverse);
+        SmartDashboard.putNumber("Current Distance", targetDistance);
+
         PIDGains gains = new PIDGains(2.0, 0.0, 0.0, 0.0, 0.03, 0.005);
         Range outputBounds = new Range(-0.5, 0.5);
         drivingPID = new PID(gains, outputBounds, 0.02);
     }
 
     public void initialize() {
+        drivetrain.resetPose();
         initialPosition = new Point(drivetrain.getPose());
 
         StaticProfile profile = new StaticProfile(0.0, 0.0, targetDistance, 1, 2, 1.35);
@@ -43,6 +49,7 @@ public class Drive implements ITask {
     }
 
     public boolean update() {
+        SmartDashboard.putNumber("Current Distance", targetDistance);
         return executor.update();
     }
 

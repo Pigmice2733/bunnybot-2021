@@ -14,7 +14,10 @@ import com.pigmice.frc.robot.autonomous.Autonomous;
 import com.pigmice.frc.robot.autonomous.LeaveLine;
 import com.pigmice.frc.robot.subsystems.Drivetrain;
 import com.pigmice.frc.robot.subsystems.ISubsystem;
+import com.revrobotics.ColorMatch;
+import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorSensorV3.RawColor;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Compressor;
@@ -71,6 +74,8 @@ public class Robot extends TimedRobot {
         autoRoutines.add(new LeaveLine(drivetrain));
 
         Autonomous.setOptions(autoRoutines);
+
+        // m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes13bit, ColorSensorMeasurementRate.kColorRate50ms, GainFactor.kGain1x);
     }
 
     @Override
@@ -147,7 +152,7 @@ public class Robot extends TimedRobot {
          * an object is the more light from the surroundings will bleed into the 
          * measurements and make it difficult to accurately determine its color.
          */
-        Color detectedColor = m_colorSensor.getColor();
+        RawColor detectedColor = m_colorSensor.getRawColor();
 
         /**
          * The sensor returns a raw IR value of the infrared light detected.
@@ -162,6 +167,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Green", detectedColor.green);
         SmartDashboard.putNumber("Blue", detectedColor.blue);
         SmartDashboard.putNumber("IR", IR);
+
+        // ColorMatchResult result = ColorMatch.makeColor(0.25, 0.5, 0.45);
 
         /**
          * In addition to RGB IR values, the color sensor can also return an 

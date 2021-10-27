@@ -7,7 +7,7 @@ import com.pigmice.frc.robot.subsystems.Drivetrain;
 
 public class LeaveLine extends Autonomous {
     public LeaveLine(Drivetrain drivetrain) {
-        this.subroutines = Arrays.asList(new Drive(drivetrain, 1.0));
+        this.subroutines = Arrays.asList(new Drive(drivetrain, 2.0));
     }
 
     public void initialize() {
