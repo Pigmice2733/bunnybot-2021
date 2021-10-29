@@ -37,7 +37,7 @@ public class Drive implements ITask {
     }
 
     public void initialize() {
-        drivetrain.resetPose();
+        // drivetrain.resetPose();
         initialPosition = new Point(drivetrain.getPose());
 
         StaticProfile profile = new StaticProfile(0.0, 0.0, targetDistance, 1, 2, 1.35);

@@ -86,7 +86,7 @@ public class Drivetrain implements ISubsystem {
     public void initialize() {
         leftPosition = 0.0;
         rightPosition = 0.0;
-        heading = 0.5 * Math.PI;
+        heading = 0.0;//0.5 * Math.PI;
 
         leftEncoder.setPosition(0.0);
         rightEncoder.setPosition(0.0);
@@ -96,7 +96,7 @@ public class Drivetrain implements ISubsystem {
         leftDemand = 0.0;
         rightDemand = 0.0;
 
-        navx.setAngleAdjustment(navx.getAngleAdjustment() - navx.getAngle() - 90.0);
+        // navx.setAngleAdjustment(navx.getAngleAdjustment() - navx.getAngle() - 90.0);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class Drivetrain implements ISubsystem {
     public void updateInputs() {
         leftPosition = leftEncoder.getPosition();
         rightPosition = rightEncoder.getPosition();
-        heading = Math.toRadians(-navx.getAngle());
+        heading = Math.toRadians(-navx.getYaw());
 
         odometry.update(leftPosition, rightPosition, heading);
     }
