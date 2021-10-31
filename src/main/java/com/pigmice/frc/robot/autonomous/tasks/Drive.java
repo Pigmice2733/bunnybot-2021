@@ -54,7 +54,7 @@ public class Drive implements ITask {
     }
 
     private double getDistance() {
-        var currentPosition = new Point(drivetrain.getPose());
+        Point currentPosition = new Point(drivetrain.getPose());
         return currentPosition.subtract(initialPosition).magnitude();
     }
 

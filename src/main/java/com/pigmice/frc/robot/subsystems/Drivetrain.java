@@ -114,7 +114,9 @@ public class Drivetrain implements ISubsystem {
     public void updateInputs() {
         leftPosition = leftEncoder.getPosition();
         rightPosition = rightEncoder.getPosition();
-        heading = Math.toRadians(-navx.getYaw());
+        
+        // calculates robot heading based on navx reading and offset
+        heading = Math.toRadians(navx.getYaw() + SystemConfig.DrivetrainConfiguration.navXRotationalOffsetDegrees % 360);
 
         odometry.update(leftPosition, rightPosition, heading);
     }

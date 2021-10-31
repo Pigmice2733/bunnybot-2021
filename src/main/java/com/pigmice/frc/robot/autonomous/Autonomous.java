@@ -10,13 +10,18 @@ import com.pigmice.frc.robot.autonomous.tasks.ITask;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Autonomous {
     protected List<ITask> subroutines = new ArrayList<>();
-    private int state = -1;
+    private int taskIndex = -1;
+    private ITask currentTask;
+    private boolean completed = false;
 
     public void initialize() {
-        state = -1;
+        taskIndex = -1;
+        currentTask = null;
+        completed = false;
     }
 
     private static SendableChooser<Autonomous> chooser = new SendableChooser<>();
@@ -50,27 +55,36 @@ public class Autonomous {
     };
 
     public void update() {
-        if(subroutines.size() == 0) {
-            return;
-        }
-
         // Initialize first state
-        if (state < 0) {
-            state = 0;
-            subroutines.get(state).initialize();
+        if (!completed && currentTask == null) {
+            if(subroutines.size() == 0) {
+                return;
+            }
+            
+            startNextTask();
         }
 
         // Update state, advance to next state if done
-        if (state < subroutines.size()) {
-            boolean done = subroutines.get(state).update();
-            if (done) {
-                state++;
-                if (state < subroutines.size()) {
-                    subroutines.get(state).initialize();
-                } else {
-                    System.out.println("Auto done");
-                }
-            }
+        boolean done = currentTask.update();
+        if (done) {
+            startNextTask();
         }
-    };
+    }
+
+    private boolean startNextTask() {
+        taskIndex++;
+        if (taskIndex < subroutines.size()) {
+            currentTask = subroutines.get(taskIndex);
+
+            SmartDashboard.putString("Current Task", currentTask.getClass().getSimpleName());
+            currentTask.initialize();
+        } else {
+            completed = true;
+            currentTask = null;
+            SmartDashboard.putString("Current Task", currentTask.getClass().getSimpleName() + " IS DONE");
+            return false;
+        }
+
+        return true;
+    }
 }

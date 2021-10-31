@@ -13,5 +13,8 @@ public class SystemConfig {
 
         public static final double rotationToDistanceConversion = 16.13;
         public static final double wheelBase = 0.603;
+
+        // 0 = navx is mounted facing robot front, 90 degrees = robot right, etc.
+        public static final int navXRotationalOffsetDegrees = 0;
     }
 }
