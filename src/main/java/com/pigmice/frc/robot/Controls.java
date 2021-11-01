@@ -17,8 +17,12 @@ public class Controls {
 
         double getRight();
     }
+    
+    //private interface OperatorProfile {
+    //    boolean intake();
+    //}
 
-    private class EasySMX implements DriverProfile {
+    private class EasySMX implements DriverProfile/*,OperatorProfile*/ {
         private final XboxController joystick;
 
         public EasySMX(XboxController joystick) {
@@ -51,7 +55,7 @@ public class Controls {
         }
     }
 
-    private class XBox implements DriverProfile {
+    private class XBox implements DriverProfile/*,OperatorProfile*/ {
         private final XboxController joystick;
 
         public XBox(XboxController joystick) {
@@ -85,6 +89,7 @@ public class Controls {
     }
 
     DriverProfile driver;
+    //OperatorProfile operator;
 
     public Controls() {
         XboxController driverJoystick = new XboxController(0);
@@ -96,6 +101,13 @@ public class Controls {
         } else {
             driver = new XBox(driverJoystick);
         }
+        /*  if (operatorJoystick.getName().equals("EasySMX CONTROLLER")) {
+            operator = new EasySMX(operatorJoystick);
+        } else if (operatorJoystick.getName().equals("Controller (XBOX 360 For Windows)")) {
+            operator = new XBox(operatorJoystick);
+        } else {
+            operator = new XBox(operatorJoystick);
+        } */
     }
 
     public void initialize() {
@@ -114,7 +126,11 @@ public class Controls {
         double value = driver.driveSpeed();
         return Math.abs(value) < 0.2 ? 0 : -value / 4;
     }
-
+    
+    /*public boolean intake() {
+        return operator.intake();
+    } */
+    
     public boolean getAButton() {
         return driver.getAButton();
     }
