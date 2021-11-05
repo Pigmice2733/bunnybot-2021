@@ -9,9 +9,9 @@ import com.pigmice.frc.robot.subsystems.Drivetrain;
 public class ForwardAndTurnAround extends Autonomous {
     public ForwardAndTurnAround(Drivetrain drivetrain) {
         this.subroutines = Arrays.asList(
-            new Drive(drivetrain, 2.0),
-            //new Turn(drivetrain, Math.PI),
-            new Drive(drivetrain, 2.0)
+            // new Drive(drivetrain, 2.0),
+            new Turn(drivetrain, -0.5 * Math.PI)
+            // new Drive(drivetrain, 2.0)
         );
     }
 

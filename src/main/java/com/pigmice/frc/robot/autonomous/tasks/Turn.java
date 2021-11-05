@@ -34,12 +34,16 @@ public class Turn implements ITask {
         SmartDashboard.putBoolean("Absolute", absolute);
 
         PIDGains gains = new PIDGains(0.0, 0.0, 0.0, 0.0, 0.6 / (2 * Math.PI), 0.00135);
-        Range outputBounds = new Range(-0.1, 0.1);
+        Range outputBounds = new Range(-0.8, 0.8);
         turningPID = new PID(gains, outputBounds, 0.02);
     }
 
     @Override
     public void initialize() {
+        // drivetrain.zeroHeading();
+        SmartDashboard.putBoolean("NavX Calibrating", true);
+        while (drivetrain.isCalibrating()) {}
+        SmartDashboard.putBoolean("NavX Calibrating", false);
         initialHeading = drivetrain.getHeading();
         targetHeading = absolute ? targetRotation : initialHeading + targetRotation;
 
@@ -47,7 +51,7 @@ public class Turn implements ITask {
         SmartDashboard.putNumber("Target Heading", targetHeading);
 
         StaticProfile profile = new StaticProfile(0.0, initialHeading, targetHeading,
-                2 * Math.PI, 1.5 * Math.PI, 1.25 * Math.PI);
+                0.25 * Math.PI, 1.5 * Math.PI, 1.25 * Math.PI);
         executor = new ProfileExecutor(profile, turningPID, this::driveOutput, this::getHeading,
                 0.02, 0.05, Timer::getFPGATimestamp);
 
@@ -68,6 +72,9 @@ public class Turn implements ITask {
     }
 
     private void driveOutput(double output) {
+        SmartDashboard.putNumber("Power Output", output);
+        if (Math.signum(targetHeading) == Math.signum(output))
+            output = -output;
         drivetrain.tankDrive(-output, output);
     }
 

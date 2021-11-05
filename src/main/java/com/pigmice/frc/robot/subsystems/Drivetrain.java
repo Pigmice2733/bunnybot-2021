@@ -15,6 +15,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drivetrain implements ISubsystem {
     private final CANSparkMax leftDrive, rightDrive, rightFollower, leftFollower;
@@ -87,6 +88,7 @@ public class Drivetrain implements ISubsystem {
         leftPosition = 0.0;
         rightPosition = 0.0;
         heading = 0.0;//0.5 * Math.PI;
+        zeroHeading();
 
         leftEncoder.setPosition(0.0);
         rightEncoder.setPosition(0.0);
@@ -110,13 +112,21 @@ public class Drivetrain implements ISubsystem {
         rightEncoderDisplay.setNumber(rightPosition);
     }
 
+    public void updateHeading() {
+        float headingDegrees = (navx.getYaw() + SystemConfig.DrivetrainConfiguration.navXRotationalOffsetDegrees) % 360;
+
+        SmartDashboard.putNumber("Heading (Degrees)", headingDegrees);
+
+        // calculates robot heading based on navx reading and offset
+        heading = Math.toRadians(headingDegrees);
+    }
+
     @Override
     public void updateInputs() {
         leftPosition = leftEncoder.getPosition();
         rightPosition = rightEncoder.getPosition();
         
-        // calculates robot heading based on navx reading and offset
-        heading = Math.toRadians(navx.getYaw() + SystemConfig.DrivetrainConfiguration.navXRotationalOffsetDegrees % 360);
+        updateHeading();
 
         odometry.update(leftPosition, rightPosition, heading);
     }
@@ -194,5 +204,14 @@ public class Drivetrain implements ISubsystem {
 
     public void resetPose() {
         this.odometry.set(new Pose(0, 0, getPose().getHeading()), 0.0, 0.0);
+    }
+
+    public void zeroHeading() {
+        this.navx.zeroYaw();
+        updateHeading();
+    }
+
+    public boolean isCalibrating() {
+        return this.navx.isCalibrating();
     }
 }
