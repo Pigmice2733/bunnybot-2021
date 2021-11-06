@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj.util.Color;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Drivetrain drivetrain;
+    private Drivetrain drivetrain;
 
     private final List<ISubsystem> subsystems = new ArrayList<>();
 
