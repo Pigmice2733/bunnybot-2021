@@ -14,8 +14,8 @@ import java.util.Properties;
 import com.pigmice.frc.robot.autonomous.Autonomous;
 import com.pigmice.frc.robot.autonomous.ForwardAndTurnAround;
 import com.pigmice.frc.robot.autonomous.LeaveLine;
-import com.pigmice.frc.robot.subsystems.Drivetrain;
-import com.pigmice.frc.robot.subsystems.ISubsystem;
+import com.pigmice.frc.robot.robotContainer.subsystems.Drivetrain;
+import com.pigmice.frc.robot.robotContainer.subsystems.ISubsystem;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -38,14 +40,11 @@ import edu.wpi.first.wpilibj.util.Color;
  * project.
  */
 public class Robot extends TimedRobot {
-    private Drivetrain drivetrain;
+    private Command m_autonomousCommand;
 
-    private final List<ISubsystem> subsystems = new ArrayList<>();
+    private RobotContainer robotContainer;
 
     private final Controls controls = new Controls();
-
-    private List<Autonomous> autoRoutines = new ArrayList<>();
-    private Autonomous autonomous;
 
 
     private double testStartTime;
@@ -55,27 +54,16 @@ public class Robot extends TimedRobot {
 
     private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
-    // Pneumatics
-    boolean pneumaticsEnabled = false;
-
-    Compressor c = new Compressor(0);
 
 
     @Override
     public void robotInit() {
         displayDeployTimestamp();
-
-        drivetrain = Drivetrain.getInstance();
-
-        subsystems.add(drivetrain);
-
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+        // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+        // autonomous chooser on the dashboard.
+        robotContainer = new RobotContainer();
 
         // Pneumatics
-        
-        autoRoutines.addAll(Arrays.asList(new LeaveLine(drivetrain), new ForwardAndTurnAround(drivetrain)));
-
-        Autonomous.setOptions(autoRoutines);
 
         // m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes13bit, ColorSensorMeasurementRate.kColorRate50ms, GainFactor.kGain1x);
     }
@@ -83,26 +71,24 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         drivetrain.setCoastMode(false);
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
-
-        autonomous = Autonomous.getSelected();
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
         autonomous.initialize();
     }
 
     @Override
     public void autonomousPeriodic() {
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
+        robotContainer.robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
 
         autonomous.update();
 
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
     }
 
     @Override
     public void teleopInit() {
         drivetrain.setCoastMode(false);
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
         SmartDashboard.putBoolean("button", false);
     }
 
@@ -110,15 +96,15 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         controls.update();
 
-        drivetrain.arcadeDrive(controls.driveSpeed(), controls.turnSpeed());
+        
         boolean aButton = controls.getAButton();
         if (aButton) {
             pneumaticsEnabled = !pneumaticsEnabled;
         }
         SmartDashboard.putBoolean("button", pneumaticsEnabled);
 
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
     }
 
     @Override
@@ -128,7 +114,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.test(Timer.getFPGATimestamp() - testStartTime));
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.test(Timer.getFPGATimestamp() - testStartTime));
     }
 
     @Override
@@ -138,8 +124,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
+        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
     }
 
     @Override
@@ -186,6 +172,11 @@ public class Robot extends TimedRobot {
         // int proximity = m_colorSensor.getProximity();
 
         // SmartDashboard.putNumber("Proximity", proximity);
+        // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+        // commands, running already-scheduled commands, removing finished or interrupted commands,
+        // and running subsystem periodic() methods.  This must be called from the robot's periodic
+        // block in order for anything in the Command-based framework to work.
+        CommandScheduler.getInstance().run();
     }
 
     private void displayDeployTimestamp() {
