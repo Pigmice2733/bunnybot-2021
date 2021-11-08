@@ -44,9 +44,6 @@ public class Robot extends TimedRobot {
 
     private RobotContainer robotContainer;
 
-    private final Controls controls = new Controls();
-
-
     private double testStartTime;
 
     // Color Senosr
@@ -62,8 +59,6 @@ public class Robot extends TimedRobot {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
-
-        // Pneumatics
 
         // m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes13bit, ColorSensorMeasurementRate.kColorRate50ms, GainFactor.kGain1x);
     }
@@ -95,13 +90,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         controls.update();
-
-        
-        boolean aButton = controls.getAButton();
-        if (aButton) {
-            pneumaticsEnabled = !pneumaticsEnabled;
-        }
-        SmartDashboard.putBoolean("button", pneumaticsEnabled);
 
         robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
         robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());

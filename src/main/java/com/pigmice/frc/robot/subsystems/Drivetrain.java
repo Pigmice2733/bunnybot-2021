@@ -17,8 +17,9 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Drivetrain implements ISubsystem {
+public class Drivetrain extends SubsystemBase {
     private final CANSparkMax leftDrive, rightDrive, rightFollower, leftFollower;
     private final CANEncoder leftEncoder, rightEncoder;
 
@@ -54,8 +55,6 @@ public class Drivetrain implements ISubsystem {
         leftFollower.follow(leftDrive);
         rightFollower.follow(rightDrive);
 
-        // setCoastMode(true);
-
         navx = new AHRS(DrivetrainConfiguration.navxPort);
 
         ShuffleboardLayout testReportLayout = Shuffleboard.getTab(Dashboard.systemsTestTabName)
@@ -84,7 +83,6 @@ public class Drivetrain implements ISubsystem {
         odometry = new Odometry(new Pose(0.0, 0.0, 0.0));
     }
 
-    @Override
     public void initialize() {
         leftPosition = 0.0;
         rightPosition = 0.0;
@@ -103,6 +101,13 @@ public class Drivetrain implements ISubsystem {
     }
 
     @Override
+    public void periodic(){
+        updateInputs();
+        updateDashboard();
+        updateHeading();
+        updateOutputs();
+    }
+
     public void updateDashboard() {
         Pose currentPose = odometry.getPose();
 
@@ -122,7 +127,6 @@ public class Drivetrain implements ISubsystem {
         heading = Math.toRadians(headingDegrees);
     }
 
-    @Override
     public void updateInputs() {
         leftPosition = leftEncoder.getPosition();
         rightPosition = rightEncoder.getPosition();
@@ -172,7 +176,6 @@ public class Drivetrain implements ISubsystem {
         rightDemand = 0.0;
     }
 
-    @Override
     public void updateOutputs() {
         leftDrive.set(leftDemand);
         rightDrive.set(rightDemand);
@@ -181,7 +184,6 @@ public class Drivetrain implements ISubsystem {
         rightDemand = 0.0;
     }
 
-    @Override
     public void test(double time) {
         if(time < 0.1) {
             navxTestAngle = navx.getAngle();

@@ -31,7 +31,10 @@ public class RobotContainer {
   private final Drivetrain drivetrain = Drivetrain.getInstance();
   
   final List<ISubsystem> subsystems = new ArrayList<>();
+  
   subsystems.add(drivetrain);
+
+  subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
 
   // Initializes autoRoutines for use in {@link Autonomous}
   private List<Autonomous> autoRoutines = new ArrayList<>();
@@ -42,8 +45,8 @@ public class RobotContainer {
     new LeaveLine(drivetrain), 
     new ForwardAndTurnAround(drivetrain)));
 
-  // The driver's controller
-  XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  // Initializing both controllers
+  private final Controls controls = new Controls();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -52,7 +55,7 @@ public class RobotContainer {
 
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
-    m_robotDrive.setDefaultCommand(
+    drivetrain.setDefaultCommand(
       // A split-stick arcade command, with forward/backward controlled by the left
       // hand, and turning controlled by the right.
         new RunCommand(
