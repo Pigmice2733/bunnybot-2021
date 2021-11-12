@@ -1,11 +1,13 @@
-package com.pigmice.frc.robot.subsystems;
+package com.pigmice.frc.robot.subsystems.impl;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pigmice.frc.lib.utils.Odometry;
 import com.pigmice.frc.lib.utils.Odometry.Pose;
 import com.pigmice.frc.lib.utils.Utils;
+import com.pigmice.frc.lib.utils.Point;
 import com.pigmice.frc.robot.Dashboard;
-import com.pigmice.frc.robot.subsystems.SystemConfig.DrivetrainConfiguration;
+import com.pigmice.frc.robot.subsystems.SystemConfig;
+import com.pigmice.frc.robot.subsystems.RobotSubsystem;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -16,10 +18,10 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Drivetrain extends SubsystemBase {
+import static com.pigmice.frc.robot.subsystems.SystemConfig.DrivetrainConfiguration;
+
+public class Drivetrain extends RobotSubsystem {
     private final CANSparkMax leftDrive, rightDrive, rightFollower, leftFollower;
     private final CANEncoder leftEncoder, rightEncoder;
 
@@ -34,6 +36,8 @@ public class Drivetrain extends SubsystemBase {
     private final NetworkTableEntry navxReport;
 
     private final NetworkTableEntry xDisplay, yDisplay, headingDisplay, leftEncoderDisplay, rightEncoderDisplay;
+
+    private Point initialPosition = Point.origin();
 
     private static Drivetrain instance = null;
 
@@ -83,6 +87,7 @@ public class Drivetrain extends SubsystemBase {
         odometry = new Odometry(new Pose(0.0, 0.0, 0.0));
     }
 
+    @Override
     public void initialize() {
         leftPosition = 0.0;
         rightPosition = 0.0;
@@ -101,13 +106,6 @@ public class Drivetrain extends SubsystemBase {
     }
 
     @Override
-    public void periodic(){
-        updateInputs();
-        updateDashboard();
-        updateHeading();
-        updateOutputs();
-    }
-
     public void updateDashboard() {
         Pose currentPose = odometry.getPose();
 
@@ -127,6 +125,7 @@ public class Drivetrain extends SubsystemBase {
         heading = Math.toRadians(headingDegrees);
     }
 
+    @Override
     public void updateInputs() {
         leftPosition = leftEncoder.getPosition();
         rightPosition = rightEncoder.getPosition();
@@ -176,6 +175,7 @@ public class Drivetrain extends SubsystemBase {
         rightDemand = 0.0;
     }
 
+    @Override
     public void updateOutputs() {
         leftDrive.set(leftDemand);
         rightDrive.set(rightDemand);
@@ -184,6 +184,7 @@ public class Drivetrain extends SubsystemBase {
         rightDemand = 0.0;
     }
 
+    @Override
     public void test(double time) {
         if(time < 0.1) {
             navxTestAngle = navx.getAngle();
@@ -207,6 +208,12 @@ public class Drivetrain extends SubsystemBase {
 
     public void resetPose() {
         this.odometry.set(new Pose(0, 0, getPose().getHeading()), 0.0, 0.0);
+        initialPosition = new Point(this.getPose());
+    }
+
+    public double getDistanceFromStart() {
+        Point currentPosition = new Point(this.getPose());
+        return currentPosition.subtract(initialPosition).magnitude();
     }
 
     public void zeroHeading() {

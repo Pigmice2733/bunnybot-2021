@@ -11,11 +11,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import com.pigmice.frc.robot.autonomous.Autonomous;
-import com.pigmice.frc.robot.autonomous.ForwardAndTurnAround;
-import com.pigmice.frc.robot.autonomous.LeaveLine;
-import com.pigmice.frc.robot.robotContainer.subsystems.Drivetrain;
-import com.pigmice.frc.robot.robotContainer.subsystems.ISubsystem;
+
+import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
+import com.pigmice.frc.robot.subsystems.RobotSubsystem;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -40,7 +38,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * project.
  */
 public class Robot extends TimedRobot {
-    private Command m_autonomousCommand;
+    private Command autonomousCommand;
 
     private RobotContainer robotContainer;
 
@@ -51,7 +49,7 @@ public class Robot extends TimedRobot {
 
     private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
-
+    private Drivetrain drivetrain;
 
     @Override
     public void robotInit() {
@@ -60,39 +58,44 @@ public class Robot extends TimedRobot {
         // autonomous chooser on the dashboard.
         robotContainer = new RobotContainer();
 
+        drivetrain = Drivetrain.getInstance();
+
         // m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes13bit, ColorSensorMeasurementRate.kColorRate50ms, GainFactor.kGain1x);
     }
 
     @Override
     public void autonomousInit() {
         drivetrain.setCoastMode(false);
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
-        autonomous.initialize();
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.initialize());
+
+        autonomousCommand = robotContainer.getAutonomousCommand();
+
+        if (autonomousCommand != null) autonomousCommand.schedule();
     }
 
     @Override
     public void autonomousPeriodic() {
-        robotContainer.robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.updateInputs());
 
-        autonomous.update();
-
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.updateOutputs());
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.updateDashboard());
     }
 
     @Override
     public void teleopInit() {
         drivetrain.setCoastMode(false);
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.initialize());
         SmartDashboard.putBoolean("button", false);
+
+        if (autonomousCommand != null) autonomousCommand.cancel();
     }
 
     @Override
     public void teleopPeriodic() {
-        controls.update();
+        robotContainer.controls.update();
 
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.updateOutputs());
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.updateDashboard());
     }
 
     @Override
@@ -102,7 +105,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.test(Timer.getFPGATimestamp() - testStartTime));
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.test(Timer.getFPGATimestamp() - testStartTime));
     }
 
     @Override
@@ -112,8 +115,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
-        robotContainer.subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.updateInputs());
+        robotContainer.subsystems.forEach((RobotSubsystem subsystem) -> subsystem.updateDashboard());
     }
 
     @Override

@@ -5,13 +5,12 @@
 package com.pigmice.frc.robot;
 
 //Autonomous imports
-import com.pigmice.frc.robot.autonomous.Autonomous;
-import com.pigmice.frc.robot.autonomous.ForwardAndTurnAround;
-import com.pigmice.frc.robot.autonomous.LeaveLine;
-
+import com.pigmice.frc.robot.commands.routines.ForwardAndTurnAround;
+import com.pigmice.frc.robot.commands.routines.LeaveLine;
+import com.pigmice.frc.robot.commands.subroutines.ArcadeDrive;
 //Subsystem imports
-import com.pigmice.frc.robot.subsystems.Drivetrain;
-import com.pigmice.frc.robot.subsystems.ISubsystem;
+import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
+import com.pigmice.frc.robot.subsystems.RobotSubsystem;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
@@ -20,6 +19,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -27,49 +30,41 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems
-  private final Drivetrain drivetrain = Drivetrain.getInstance();
-  
-  final List<ISubsystem> subsystems = new ArrayList<>();
-  
-  subsystems.add(drivetrain);
 
-  subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
-
-  // Initializes autoRoutines for use in {@link Autonomous}
-  private List<Autonomous> autoRoutines = new ArrayList<>();
-  Autonomous autonomous;
+  private Drivetrain drivetrain;
   
-  // The autonomous routines
-  autoRoutines.addAll(Arrays.asList(
-    new LeaveLine(drivetrain), 
-    new ForwardAndTurnAround(drivetrain)));
+  final List<RobotSubsystem> subsystems = new ArrayList<>();
 
+  private final Command leaveline = new LeaveLine(drivetrain);
+  private final Command fowardAndTurnAround = new ForwardAndTurnAround(drivetrain);
+  
+  // A chooser for autonomous commands
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  
   // Initializing both controllers
-  private final Controls controls = new Controls();
+  final Controls controls = new Controls();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the button bindings
-    configureButtonBindings();
+    this.drivetrain = Drivetrain.getInstance();
+    subsystems.add(drivetrain);
+
+    subsystems.forEach((RobotSubsystem subsystem) -> subsystem.initialize());
 
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
     drivetrain.setDefaultCommand(
-      // A split-stick arcade command, with forward/backward controlled by the left
-      // hand, and turning controlled by the right.
-        new RunCommand(
-            () ->
-              drivetrain.arcadeDrive(
-                  controls.driveSpeed(), controls.turnSpeed()),
-            drivetrain;
+        new ArcadeDrive(
+          drivetrain, controls::driveSpeed, controls::turnSpeed
+        )
+    );
 
-      // Add commands to the autonomous command chooser
-      Autonomous.setOptions(autoRoutines);
+    // Add commands to the autonomous command chooser
+    m_chooser.setDefaultOption("Leave Line", leaveline);
+    m_chooser.addOption("Foward And Turn Around", fowardAndTurnAround);
 
-      // Gets current selected command on SmartDashboard
-      autonomous = Autonomous.getSelected();
-
+    // Put the chooser on the dashboard
+    Shuffleboard.getTab("Autonomous").add(m_chooser);
   }
 
   /**
@@ -81,4 +76,4 @@ public class RobotContainer {
     return m_chooser.getSelected();
   }
 }
-}
+
