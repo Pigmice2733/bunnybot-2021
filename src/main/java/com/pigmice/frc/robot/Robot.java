@@ -60,6 +60,8 @@ public class Robot extends TimedRobot {
 
     Compressor c = new Compressor(0);
 
+    // TODO make this a SendableChooser so it can be set by the operators
+    public static Alliance ALLIANCE = Alliance.RED;
 
     @Override
     public void robotInit() {
@@ -205,5 +207,9 @@ public class Robot extends TimedRobot {
         }
 
         timestampDisplay.forceSetString(properties.getProperty("DEPLOY_TIMESTAMP"));
+    }
+  
+    enum Alliance {
+        RED, BLUE;
     }
 }
