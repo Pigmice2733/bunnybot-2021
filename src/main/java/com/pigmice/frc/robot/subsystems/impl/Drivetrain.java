@@ -7,7 +7,6 @@ import com.pigmice.frc.lib.utils.Utils;
 import com.pigmice.frc.lib.utils.Point;
 import com.pigmice.frc.robot.Dashboard;
 import com.pigmice.frc.robot.subsystems.SystemConfig;
-import com.pigmice.frc.robot.subsystems.RobotSubsystem;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -18,10 +17,11 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.pigmice.frc.robot.subsystems.SystemConfig.DrivetrainConfiguration;
 
-public class Drivetrain extends RobotSubsystem {
+public class Drivetrain extends SubsystemBase {
     private final CANSparkMax leftDrive, rightDrive, rightFollower, leftFollower;
     private final CANEncoder leftEncoder, rightEncoder;
 
@@ -85,10 +85,8 @@ public class Drivetrain extends RobotSubsystem {
         rightEncoderDisplay = odometryLayout.add("Right Encoder", 0).getEntry();
 
         odometry = new Odometry(new Pose(0.0, 0.0, 0.0));
-    }
 
-    @Override
-    public void initialize() {
+        // Used to be in initialize()
         leftPosition = 0.0;
         rightPosition = 0.0;
         heading = 0.0;//0.5 * Math.PI;
@@ -106,7 +104,16 @@ public class Drivetrain extends RobotSubsystem {
     }
 
     @Override
-    public void updateDashboard() {
+    public void periodic() {
+        // from updateInputs
+        leftPosition = leftEncoder.getPosition();
+        rightPosition = rightEncoder.getPosition();
+        
+        updateHeading();
+
+        odometry.update(leftPosition, rightPosition, heading);
+
+        // from updateDashboard()
         Pose currentPose = odometry.getPose();
 
         xDisplay.setNumber(currentPose.getX());
@@ -114,6 +121,10 @@ public class Drivetrain extends RobotSubsystem {
         headingDisplay.setNumber(currentPose.getHeading());
         leftEncoderDisplay.setNumber(leftPosition);
         rightEncoderDisplay.setNumber(rightPosition);
+    }
+
+    public void updateDashboard() {
+        
     }
 
     public void updateHeading() {
@@ -125,14 +136,7 @@ public class Drivetrain extends RobotSubsystem {
         heading = Math.toRadians(headingDegrees);
     }
 
-    @Override
     public void updateInputs() {
-        leftPosition = leftEncoder.getPosition();
-        rightPosition = rightEncoder.getPosition();
-        
-        updateHeading();
-
-        odometry.update(leftPosition, rightPosition, heading);
     }
 
     public double getHeading() {
@@ -146,11 +150,15 @@ public class Drivetrain extends RobotSubsystem {
     public void tankDrive(double leftSpeed, double rightSpeed) {
         leftDemand = leftSpeed;
         rightDemand = rightSpeed;
+
+        updateOutputs();
     }
 
     public void arcadeDrive(double forwardSpeed, double turnSpeed) {
         leftDemand = forwardSpeed + turnSpeed;
         rightDemand = forwardSpeed - turnSpeed;
+
+        updateOutputs();
     }
 
     public void curvatureDrive(double forwardSpeed, double curvature) {
@@ -164,6 +172,8 @@ public class Drivetrain extends RobotSubsystem {
 
         leftDemand = leftSpeed;
         rightDemand = rightSpeed;
+
+        updateOutputs();
     }
 
     public void swerveDrive(double forward, double strafe, double rotation_x) {
@@ -175,7 +185,6 @@ public class Drivetrain extends RobotSubsystem {
         rightDemand = 0.0;
     }
 
-    @Override
     public void updateOutputs() {
         leftDrive.set(leftDemand);
         rightDrive.set(rightDemand);
@@ -184,7 +193,6 @@ public class Drivetrain extends RobotSubsystem {
         rightDemand = 0.0;
     }
 
-    @Override
     public void test(double time) {
         if(time < 0.1) {
             navxTestAngle = navx.getAngle();

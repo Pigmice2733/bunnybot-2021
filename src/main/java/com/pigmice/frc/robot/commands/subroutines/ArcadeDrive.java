@@ -15,6 +15,8 @@ public class ArcadeDrive extends CommandBase {
         this.drivetrain = drivetrain;
         this.forward = forward;
         this.rotation = rotation;
+
+        this.addRequirements(Drivetrain.getInstance());
     }
 
     @Override
