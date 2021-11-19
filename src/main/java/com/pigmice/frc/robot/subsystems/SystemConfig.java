@@ -18,8 +18,7 @@ public class SystemConfig {
         public static final int navXRotationalOffsetDegrees = 0;
     }
     public static class IntakeConfiguration {
-        public static final int motorPort = 5;
-        public static final int invertedMotorPort = 6;
-        public static final boolean motorInverted = true;
+        public static final int leftMotorPort = 5;
+        public static final int rightMotorPort = 6;
     }
 }
