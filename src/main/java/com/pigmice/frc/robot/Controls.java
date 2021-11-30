@@ -134,6 +134,7 @@ public class Controls {
     public boolean getAButton() {
         return driver.getAButton();
     }
+
     public double leftSpeed() {
         return -driver.getLeft();
     }

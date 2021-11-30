@@ -11,11 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-import com.pigmice.frc.robot.autonomous.Autonomous;
-import com.pigmice.frc.robot.autonomous.ForwardAndTurnAround;
-import com.pigmice.frc.robot.autonomous.LeaveLine;
-import com.pigmice.frc.robot.subsystems.Drivetrain;
-import com.pigmice.frc.robot.subsystems.ISubsystem;
+import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -30,23 +26,20 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to each mode, as described in the TimedRobot
+ * documentation. If you change the name of this class or the package after
+ * creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
-  private Drivetrain drivetrain;
+    private Command autonomousCommand;
 
-    private final List<ISubsystem> subsystems = new ArrayList<>();
-
-    private final Controls controls = new Controls();
-
-    private List<Autonomous> autoRoutines = new ArrayList<>();
-    private Autonomous autonomous;
-
+    private RobotContainer robotContainer;
 
     private double testStartTime;
 
@@ -55,72 +48,67 @@ public class Robot extends TimedRobot {
 
     private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
-    // Pneumatics
-    boolean pneumaticsEnabled = false;
-
-    Compressor c = new Compressor(0);
-
+    private Drivetrain drivetrain;
+  
     // TODO make this a SendableChooser so it can be set by the operators
     public static Alliance ALLIANCE = Alliance.RED;
 
     @Override
     public void robotInit() {
         displayDeployTimestamp();
+        // Instantiate our RobotContainer. This will perform all our button bindings,
+        // and put our
+        // autonomous chooser on the dashboard.
+        robotContainer = new RobotContainer();
 
-        drivetrain = Drivetrain.getInstance();
+        this.drivetrain = Drivetrain.getInstance();
 
-        subsystems.add(drivetrain);
-
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
-
-        // Pneumatics
-        
-        autoRoutines.addAll(Arrays.asList(new LeaveLine(drivetrain), new ForwardAndTurnAround(drivetrain)));
-
-        Autonomous.setOptions(autoRoutines);
-
-        // m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes13bit, ColorSensorMeasurementRate.kColorRate50ms, GainFactor.kGain1x);
+        // m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes13bit,
+        // ColorSensorMeasurementRate.kColorRate50ms, GainFactor.kGain1x);
     }
 
     @Override
     public void autonomousInit() {
         drivetrain.setCoastMode(false);
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.initialize());
 
-        autonomous = Autonomous.getSelected();
-        autonomous.initialize();
+        autonomousCommand = robotContainer.getAutonomousCommand();
+
+        if (autonomousCommand != null)
+            autonomousCommand.schedule();
     }
 
     @Override
     public void autonomousPeriodic() {
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.updateInputs());
 
-        autonomous.update();
-
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.updateOutputs());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.updateDashboard());
     }
 
     @Override
     public void teleopInit() {
         drivetrain.setCoastMode(false);
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.initialize());
         SmartDashboard.putBoolean("button", false);
+
+        if (autonomousCommand != null)
+            autonomousCommand.cancel();
     }
 
     @Override
     public void teleopPeriodic() {
-        controls.update();
+        robotContainer.controls.update();
 
-        drivetrain.arcadeDrive(controls.driveSpeed(), controls.turnSpeed());
-        boolean aButton = controls.getAButton();
-        if (aButton) {
-            pneumaticsEnabled = !pneumaticsEnabled;
-        }
-        SmartDashboard.putBoolean("button", pneumaticsEnabled);
-
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateOutputs());
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.updateOutputs());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.updateDashboard());
     }
 
     @Override
@@ -130,7 +118,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testPeriodic() {
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.test(Timer.getFPGATimestamp() - testStartTime));
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.test(Timer.getFPGATimestamp() - testStartTime));
     }
 
     @Override
@@ -140,21 +129,23 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateInputs());
-        subsystems.forEach((ISubsystem subsystem) -> subsystem.updateDashboard());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.updateInputs());
+        // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
+        // subsystem.updateDashboard());
     }
 
     @Override
     public void robotPeriodic() {
         /**
-         * The method GetColor() returns a normalized color value from the sensor and can be
-         * useful if outputting the color to an RGB LED or similar. To
-         * read the raw color, use GetRawColor().
+         * The method GetColor() returns a normalized color value from the sensor and
+         * can be useful if outputting the color to an RGB LED or similar. To read the
+         * raw color, use GetRawColor().
          * 
-         * The color sensor works best when within a few inches from an object in
-         * well lit conditions (the built in LED is a big help here!). The farther
-         * an object is the more light from the surroundings will bleed into the 
-         * measurements and make it difficult to accurately determine its color.
+         * The color sensor works best when within a few inches from an object in well
+         * lit conditions (the built in LED is a big help here!). The farther an object
+         * is the more light from the surroundings will bleed into the measurements and
+         * make it difficult to accurately determine its color.
          */
         // RawColor detectedColor = m_colorSensor.getRawColor();
 
@@ -164,8 +155,7 @@ public class Robot extends TimedRobot {
         // double IR = m_colorSensor.getIR();
 
         /**
-         * Open Smart Dashboard or Shuffleboard to see the color detected by the 
-         * sensor.
+         * Open Smart Dashboard or Shuffleboard to see the color detected by the sensor.
          */
         // SmartDashboard.putNumber("Red", detectedColor.red);
         // SmartDashboard.putNumber("Green", detectedColor.green);
@@ -175,19 +165,27 @@ public class Robot extends TimedRobot {
         // ColorMatchResult result = ColorMatch.makeColor(0.25, 0.5, 0.45);
 
         /**
-         * In addition to RGB IR values, the color sensor can also return an 
-         * infrared proximity value. The chip contains an IR led which will emit
-         * IR pulses and measure the intensity of the return. When an object is 
-         * close the value of the proximity will be large (max 2047 with default
-         * settings) and will approach zero when the object is far away.
+         * In addition to RGB IR values, the color sensor can also return an infrared
+         * proximity value. The chip contains an IR led which will emit IR pulses and
+         * measure the intensity of the return. When an object is close the value of the
+         * proximity will be large (max 2047 with default settings) and will approach
+         * zero when the object is far away.
          * 
-         * Proximity can be used to roughly approximate the distance of an object
-         * or provide a threshold for when an object is close enough to provide
-         * accurate color values.
+         * Proximity can be used to roughly approximate the distance of an object or
+         * provide a threshold for when an object is close enough to provide accurate
+         * color values.
          */
         // int proximity = m_colorSensor.getProximity();
 
         // SmartDashboard.putNumber("Proximity", proximity);
+        // Runs the Scheduler. This is responsible for polling buttons, adding
+        // newly-scheduled
+        // commands, running already-scheduled commands, removing finished or
+        // interrupted commands,
+        // and running subsystem periodic() methods. This must be called from the
+        // robot's periodic
+        // block in order for anything in the Command-based framework to work.
+        CommandScheduler.getInstance().run();
     }
 
     private void displayDeployTimestamp() {
