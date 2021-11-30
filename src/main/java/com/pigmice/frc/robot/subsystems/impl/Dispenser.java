@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 // ^ I don't fully understand any of these but they need to be here
 
 public class Dispenser extends SubsystemBase {
-    private final DoubleSolenoid solenoid; // creates the variable
+    private final DoubleSolenoid solenoid; // creates the object
     // initialize values
     private Value targetPistonState = Value.kReverse;
     private Value previousPistonState = Value.kOff;
