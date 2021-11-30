@@ -49,6 +49,9 @@ public class Robot extends TimedRobot {
     private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
     private Drivetrain drivetrain;
+  
+    // TODO make this a SendableChooser so it can be set by the operators
+    public static Alliance ALLIANCE = Alliance.RED;
 
     @Override
     public void robotInit() {
@@ -202,5 +205,9 @@ public class Robot extends TimedRobot {
         }
 
         timestampDisplay.forceSetString(properties.getProperty("DEPLOY_TIMESTAMP"));
+    }
+  
+    enum Alliance {
+        RED, BLUE;
     }
 }
