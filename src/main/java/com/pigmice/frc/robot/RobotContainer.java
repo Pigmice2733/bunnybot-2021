@@ -8,6 +8,8 @@ package com.pigmice.frc.robot;
 import com.pigmice.frc.robot.commands.routines.ForwardAndTurnAround;
 import com.pigmice.frc.robot.commands.routines.LeaveLine;
 import com.pigmice.frc.robot.commands.subroutines.ArcadeDrive;
+import com.pigmice.frc.robot.commands.subroutines.ColorSort;
+import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
 //Subsystem imports
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 
@@ -34,6 +36,8 @@ public class RobotContainer {
 
   private Drivetrain drivetrain;
 
+  private ColorSorter colorSorter;
+
   final List<SubsystemBase> subsystems = new ArrayList<>();
 
   // A chooser for autonomous commands
@@ -49,6 +53,9 @@ public class RobotContainer {
     this.drivetrain = Drivetrain.getInstance();
     subsystems.add(drivetrain);
 
+    this.colorSorter = ColorSorter.getInstance();
+    subsystems.add(colorSorter);
+
     Command leaveline = new LeaveLine(drivetrain);
     Command fowardAndTurnAround = new ForwardAndTurnAround(drivetrain);
 
@@ -57,6 +64,7 @@ public class RobotContainer {
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
     drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::driveSpeed, controls::turnSpeed));
+    colorSorter.setDefaultCommand(new ColorSort(colorSorter));
 
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Leave Line", leaveline);
