@@ -11,11 +11,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+<<<<<<< Updated upstream
 import com.pigmice.frc.robot.autonomous.Autonomous;
 import com.pigmice.frc.robot.autonomous.ForwardAndTurnAround;
 import com.pigmice.frc.robot.autonomous.LeaveLine;
 import com.pigmice.frc.robot.subsystems.Drivetrain;
 import com.pigmice.frc.robot.subsystems.ISubsystem;
+=======
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
+import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
+>>>>>>> Stashed changes
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -55,21 +62,31 @@ public class Robot extends TimedRobot {
 
     private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
+<<<<<<< Updated upstream
     // Pneumatics
     boolean pneumaticsEnabled = false;
 
     Compressor c = new Compressor(0);
 
+=======
+    private Drivetrain drivetrain;
+    private ColorSorter colorSorter;
+>>>>>>> Stashed changes
 
     @Override
     public void robotInit() {
         displayDeployTimestamp();
 
+<<<<<<< Updated upstream
         drivetrain = Drivetrain.getInstance();
 
         subsystems.add(drivetrain);
 
         subsystems.forEach((ISubsystem subsystem) -> subsystem.initialize());
+=======
+        this.drivetrain = Drivetrain.getInstance();
+        this.colorSorter = ColorSorter.getInstance();
+>>>>>>> Stashed changes
 
         // Pneumatics
         
@@ -144,6 +161,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+<<<<<<< Updated upstream
         /**
          * The method GetColor() returns a normalized color value from the sensor and can be
          * useful if outputting the color to an RGB LED or similar. To
@@ -186,6 +204,13 @@ public class Robot extends TimedRobot {
         // int proximity = m_colorSensor.getProximity();
 
         // SmartDashboard.putNumber("Proximity", proximity);
+=======
+        
+        
+        
+        
+        CommandScheduler.getInstance().run();
+>>>>>>> Stashed changes
     }
 
     private void displayDeployTimestamp() {
