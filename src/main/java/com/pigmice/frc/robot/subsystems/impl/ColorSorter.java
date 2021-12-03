@@ -28,10 +28,10 @@ public class ColorSorter extends SubsystemBase {
 
   // all of these should be greater than 1
   private static double redScaleToBlue = 1.5;
-  private static double redScaleToGreen = 1.25;
+  private static double redScaleToGreen = 1.0;
 
   private static double blueScaleToRed = 1.5;
-  private static double blueScaleToGreen = 1.25;
+  private static double blueScaleToGreen = 1.0;
 
   RawColor detectedColor;
 
