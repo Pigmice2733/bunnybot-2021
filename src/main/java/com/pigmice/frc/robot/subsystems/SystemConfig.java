@@ -22,4 +22,8 @@ public class SystemConfig {
         public static final int invertedMotorPort = 6;
         public static final boolean motorInverted = true;
     }
+
+    public static class DispenserConfiguration {
+        public static final int[] DispenserSolenoidPorts = new int[] {0,1}; //SUBJECT TO CHANGE
+    }
 }

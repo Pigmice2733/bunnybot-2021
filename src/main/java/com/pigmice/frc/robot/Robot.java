@@ -43,7 +43,7 @@ public class Robot extends TimedRobot {
 
     private double testStartTime;
 
-    // Color Senosr
+    // Color Sensor
     private final I2C.Port i2cPort = I2C.Port.kOnboard;
 
     private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
@@ -72,6 +72,7 @@ public class Robot extends TimedRobot {
 
         autonomousCommand = robotContainer.getAutonomousCommand();
 
+<<<<<<< Updated upstream
         if (autonomousCommand != null)
             autonomousCommand.schedule();
     }
@@ -80,6 +81,17 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
         // subsystem.updateInputs());
+=======
+  @Override
+  public void autonomousInit() {
+    ProgChall1.execute();
+  }
+
+  @Override
+  public void autonomousPeriodic() {
+    ProgChall1.repeat();
+  }
+>>>>>>> Stashed changes
 
         // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
         // subsystem.updateOutputs());

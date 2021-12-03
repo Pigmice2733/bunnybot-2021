@@ -8,6 +8,7 @@ package com.pigmice.frc.robot;
 import com.pigmice.frc.robot.commands.routines.ForwardAndTurnAround;
 import com.pigmice.frc.robot.commands.routines.LeaveLine;
 import com.pigmice.frc.robot.commands.subroutines.ArcadeDrive;
+import com.pigmice.frc.robot.subsystems.impl.Dispenser;
 //Subsystem imports
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 
@@ -33,6 +34,7 @@ import java.util.List;
 public class RobotContainer {
 
   private Drivetrain drivetrain;
+  private Dispenser dispenser;
 
   final List<SubsystemBase> subsystems = new ArrayList<>();
 
@@ -48,6 +50,9 @@ public class RobotContainer {
   public RobotContainer() {
     this.drivetrain = Drivetrain.getInstance();
     subsystems.add(drivetrain);
+
+    this.dispenser = Dispenser.getInstance();
+    subsystems.add(dispenser);
 
     Command leaveline = new LeaveLine(drivetrain);
     Command fowardAndTurnAround = new ForwardAndTurnAround(drivetrain);
