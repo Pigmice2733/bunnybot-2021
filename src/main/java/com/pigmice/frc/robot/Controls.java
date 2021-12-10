@@ -22,81 +22,42 @@ public class Controls {
     //    boolean intake();
     //}
 
-    private class EasySMX implements DriverProfile/*,OperatorProfile*/ {
-        private final XboxController joystick;
 
-        public EasySMX(XboxController joystick) {
-            this.joystick = joystick;
-        }
-
-        @Override
-        public double driveSpeed() {
-            return getLeft();
-        }
-
-        @Override
-        public double turnSpeed() {
-            return joystick.getX(Hand.kRight) / 2;
-        }
-
-        @Override 
-        public boolean getAButton() {
-            return joystick.getAButtonPressed();
-        }
-
-        @Override
-        public double getLeft() {
-            return joystick.getY(Hand.kLeft);
-        }
-
-        @Override
-        public double getRight() {
-            return joystick.getY(Hand.kRight);
-        }
-    }
-
-    private class XBox implements DriverProfile/*,OperatorProfile*/ {
+    public class XBox /*,OperatorProfile*/ {
         private final XboxController joystick;
 
         public XBox(XboxController joystick) {
             this.joystick = joystick;
         }
 
-        @Override
+
         public double driveSpeed() {
-            return getLeft();
+            return joystick.getTriggerAxis(Hand.kRight);
         }
 
-        @Override
+        public double reverseSpeed() {
+            return joystick.getTriggerAxis(Hand.kLeft);
+        }
+
         public double turnSpeed() {
-            return joystick.getX(Hand.kRight) / 2;
+            return joystick.getX(Hand.kLeft) / 2;
         }
 
-        @Override
-        public boolean getAButton() {
-            return joystick.getAButtonPressed();
-        }
-
-        @Override
-        public double getLeft() {
-            return joystick.getY(Hand.kLeft);
-        }
-
-        @Override
-        public double getRight() {
-            return joystick.getY(Hand.kRight);
+        public double turnSlow() {
+            return joystick.getX(Hand.kRight) / 8;
         }
     }
 
-    DriverProfile driver;
+    //DriverProfile driver;
     //OperatorProfile operator;
 
     public Controls() {
         XboxController driverJoystick = new XboxController(0);
+        Xbox driver = new Xbox(driverJoystick);
 
-        if (driverJoystick.getName().equals("EasySMX CONTROLLER")) {
-            driver = new EasySMX(driverJoystick);
-        } else if (driverJoystick.getName().equals("Controller (XBOX 360 For Windows)")) {
+        /*if (driverJoystick.getName().equals("EasySMX CONTROLLER")) {
+           // driver = new EasySMX(driverJoystick);
+        if (driverJoystick.getName().equals("Controller (XBOX 360 For Windows)")) {
             driver = new XBox(driverJoystick);
         } else {
             driver = new XBox(driverJoystick);
@@ -118,29 +79,31 @@ public class Controls {
     }
 
     public double turnSpeed() {
-        final double steering = driver.turnSpeed();
-        return steering / 4;
+        double fast = driver.turnSpeed();
+        double slow = driver.turnSlow();
+        double value;
+        if (Math.abs(slow) >= 0.2) {
+            value = slow / -4;
+        } else if (Math.abs(fast) >= 0.2) {
+            value = fast / -4;
+        }
+        return value;
     }
 
     public double driveSpeed() {
-        double value = driver.driveSpeed();
-        return Math.abs(value) < 0.2 ? 0 : -value / 4;
+        double valueF = driver.driveSpeed();
+        double valueR = driver.reverseSpeed();
+        double value = 0;
+        if (Math.abs(valueF) >= 0.2) {
+            value += valueF / -4;
+        }
+        if (Math.abs(valueR) >= 0.2) {
+            value += valueR / 4;
+        }
+        return value;
     }
     
     /*public boolean intake() {
         return operator.intake();
     } */
-    
-    public boolean getAButton() {
-        return driver.getAButton();
-    }
-
-    public double leftSpeed() {
-        return -driver.getLeft();
-    }
-
-    public double rightSpeed() {
-        return -driver.getRight();
-    }
-
 }
