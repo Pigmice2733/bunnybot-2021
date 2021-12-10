@@ -2,8 +2,12 @@ package com.pigmice.frc.robot;
 
 import com.pigmice.frc.lib.inputs.Debouncer;
 import com.pigmice.frc.lib.inputs.Toggle;
+import com.pigmice.frc.robot.subsystems.impl.Intake;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class Controls {
@@ -27,7 +31,7 @@ public class Controls {
         XboxController controller = new XboxController(0);
         JoystickButton lbButton = new JoystickButton(controller, 4);
         final Intake intakeSubsystem = Intake.getInstance();
-        lbButton.toggleWhenPressed(new InstantCommand(intakeSubsystem::toggle));
+        lbButton.toggleWhenPressed((Command) new InstantCommand(intakeSubsystem::toggle));
     }
 
     private class EasySMX implements DriverProfile/*,OperatorProfile*/ {
@@ -53,8 +57,8 @@ public class Controls {
         }
 
         @Override
-        pubic boolean getYButton() {
-            return joystick.getYbuttonPressed();
+        public boolean getYButton() {
+            return joystick.getYButtonPressed();
         }
 
         @Override
@@ -91,7 +95,7 @@ public class Controls {
         }
 
         @Override 
-        public boolean getYbutton() {
+        public boolean getYButton() {
             return joystick.getYButtonPressed();
         }
 
@@ -162,7 +166,7 @@ public class Controls {
     }
     
     public boolean getYbutton() {
-        return driver.getYbutton(); 
+        return driver.getYButton(); 
     }
 
 }
