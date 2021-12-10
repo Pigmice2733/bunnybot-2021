@@ -22,6 +22,13 @@ public class Controls {
     //    boolean intake();
     //}
 
+    public static void bindTriggers(){
+        XboxController controller = new XboxController(0);
+        JoystickButton lbButton = new JoystickButton(controller, 4);
+        final ColorSorter sorterSubsystem = ColorSorter.getInstance();
+        lbButton.toggleWhenPressed(new RunCommand(sorterSubsystem::colorSort));
+    }
+
     private class EasySMX implements DriverProfile/*,OperatorProfile*/ {
         private final XboxController joystick;
 

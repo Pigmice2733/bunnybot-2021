@@ -55,7 +55,7 @@ public class ColorSorter extends SubsystemBase {
 
   }
 
-  public void ColorSort() {
+  public void colorSort() {
 
     detectedColor = colorSensor.getRawColor();
 
