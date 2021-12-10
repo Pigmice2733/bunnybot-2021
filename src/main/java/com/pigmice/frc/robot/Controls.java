@@ -9,13 +9,15 @@ import edu.wpi.first.wpilibj.XboxController;
 public class Controls {
     private interface DriverProfile {
         double driveSpeed();
-
+        double reverseSpeed();
         double turnSpeed();
-        boolean getAButton();
+        double turnSlow();
+        /*boolean getAButton();
         
         double getLeft();
 
         double getRight();
+        */
     }
     
     //private interface OperatorProfile {
@@ -23,38 +25,41 @@ public class Controls {
     //}
 
 
-    public class XBox /*,OperatorProfile*/ {
+    public class XBox implements DriverProfile /*,OperatorProfile*/ {
         private final XboxController joystick;
 
         public XBox(XboxController joystick) {
             this.joystick = joystick;
         }
 
-
+        @Override
         public double driveSpeed() {
             return joystick.getTriggerAxis(Hand.kRight);
         }
 
+        @Override
         public double reverseSpeed() {
             return joystick.getTriggerAxis(Hand.kLeft);
         }
 
+        @Override
         public double turnSpeed() {
             return joystick.getX(Hand.kLeft) / 2;
         }
 
+        @Override
         public double turnSlow() {
             return joystick.getX(Hand.kRight) / 8;
         }
     }
 
-    //DriverProfile driver;
+    DriverProfile driver;
     //OperatorProfile operator;
 
     public Controls() {
         XboxController driverJoystick = new XboxController(0);
-        XBox driver = new XBox(driverJoystick);
-
+        XBox driver = new XBox(driverJoystick);    
+        
         /*if (driverJoystick.getName().equals("EasySMX CONTROLLER")) {
            // driver = new EasySMX(driverJoystick);
         if (driverJoystick.getName().equals("Controller (XBOX 360 For Windows)")) {
@@ -71,17 +76,10 @@ public class Controls {
         } */
     }
 
-    public void initialize() {
-    }
-
-    public void update() {
-        
-    }
-
     public double turnSpeed() {
         double fast = driver.turnSpeed();
         double slow = driver.turnSlow();
-        double value;
+        double value = 0d;
         if (Math.abs(slow) >= 0.2) {
             value = slow / -4;
         } else if (Math.abs(fast) >= 0.2) {
@@ -93,7 +91,7 @@ public class Controls {
     public double driveSpeed() {
         double valueF = driver.driveSpeed();
         double valueR = driver.reverseSpeed();
-        double value = 0;
+        double value = 0d;
         if (Math.abs(valueF) >= 0.2) {
             value += valueF / -4;
         }
