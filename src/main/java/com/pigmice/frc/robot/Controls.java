@@ -12,6 +12,7 @@ public class Controls {
 
         double turnSpeed();
         boolean getAButton();
+        boolean getYButton();
         
         double getLeft();
 
@@ -21,6 +22,13 @@ public class Controls {
     //private interface OperatorProfile {
     //    boolean intake();
     //}
+
+    public static void bindTriggers(){
+        XboxController controller = new XboxController(0);
+        JoystickButton lbButton = new JoystickButton(controller, 4);
+        final Intake intakeSubsystem = Intake.getInstance();
+        lbButton.toggleWhenPressed(new InstantCommand(intakeSubsystem::toggle));
+    }
 
     private class EasySMX implements DriverProfile/*,OperatorProfile*/ {
         private final XboxController joystick;
@@ -42,6 +50,11 @@ public class Controls {
         @Override 
         public boolean getAButton() {
             return joystick.getAButtonPressed();
+        }
+
+        @Override
+        pubic boolean getYButton() {
+            return joystick.getYbuttonPressed();
         }
 
         @Override
@@ -75,6 +88,11 @@ public class Controls {
         @Override
         public boolean getAButton() {
             return joystick.getAButtonPressed();
+        }
+
+        @Override 
+        public boolean getYbutton() {
+            return joystick.getYButtonPressed();
         }
 
         @Override
@@ -141,6 +159,10 @@ public class Controls {
 
     public double rightSpeed() {
         return -driver.getRight();
+    }
+    
+    public boolean getYbutton() {
+        return driver.getYbutton(); 
     }
 
 }
