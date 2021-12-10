@@ -53,7 +53,7 @@ public class Controls {
 
     public Controls() {
         XboxController driverJoystick = new XboxController(0);
-        Xbox driver = new Xbox(driverJoystick);
+        XBox driver = new XBox(driverJoystick);
 
         /*if (driverJoystick.getName().equals("EasySMX CONTROLLER")) {
            // driver = new EasySMX(driverJoystick);
