@@ -2,9 +2,13 @@ package com.pigmice.frc.robot;
 
 import com.pigmice.frc.lib.inputs.Debouncer;
 import com.pigmice.frc.lib.inputs.Toggle;
+import com.pigmice.frc.robot.subsystems.impl.Dispenser;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Controls {
     private interface DriverProfile {
@@ -29,7 +33,7 @@ public class Controls {
         final JoystickButton bButton = new JoystickButton(controller, 1);
 
         final Dispenser dispenserSubsystem = Dispenser.getInstance();
-        aButton.and(rbButton).whenPressed(new InstantCommand(dispenserSubsystem::open));
+        aButton.and(rbButton).whenActive(new InstantCommand(dispenserSubsystem::open));
         bButton.whenPressed(new InstantCommand(dispenserSubsystem::close));
     }
 
