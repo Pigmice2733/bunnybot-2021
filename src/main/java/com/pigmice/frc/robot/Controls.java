@@ -22,6 +22,17 @@ public class Controls {
     //    boolean intake();
     //}
 
+    public static void bindTriggers(){
+        final XboxController controller = new XboxController(0);
+        final JoystickButton aButton = new JoystickButton(controller, 1);
+        final JoystickButton rbButton = new JoystickButton(controller, 1);
+        final JoystickButton bButton = new JoystickButton(controller, 1);
+
+        final Dispenser dispenserSubsystem = Dispenser.getInstance();
+        aButton.and(rbButton).whenPressed(new InstantCommand(dispenserSubsystem::open));
+        bButton.whenPressed(new InstantCommand(dispenserSubsystem::close));
+    }
+
     private class EasySMX implements DriverProfile/*,OperatorProfile*/ {
         private final XboxController joystick;
 
