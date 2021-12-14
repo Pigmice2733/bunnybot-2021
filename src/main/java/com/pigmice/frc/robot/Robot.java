@@ -103,8 +103,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        robotContainer.controls.update();
-
         // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
         // subsystem.updateOutputs());
         // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->

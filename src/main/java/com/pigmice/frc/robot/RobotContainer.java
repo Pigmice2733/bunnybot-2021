@@ -40,12 +40,17 @@ public class RobotContainer {
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   // Initializing both controllers
-  final Controls controls = new Controls();
+  final Controls controls;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    XboxController driver = new XboxController(0);
+    XboxController operator = new XboxController(1);
+
+    controls = new Controls(driver, operator);
+
     this.drivetrain = Drivetrain.getInstance();
     subsystems.add(drivetrain);
 
