@@ -8,6 +8,7 @@ package com.pigmice.frc.robot;
 import com.pigmice.frc.robot.commands.routines.ForwardAndTurnAround;
 import com.pigmice.frc.robot.commands.routines.LeaveLine;
 import com.pigmice.frc.robot.commands.subroutines.ArcadeDrive;
+import com.pigmice.frc.robot.commands.subroutines.TurnToAngle;
 //Subsystem imports
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 
@@ -63,12 +64,24 @@ public class RobotContainer {
     // Set the default drive command to split-stick arcade drive
     drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::driveSpeed, controls::turnSpeed));
 
+    configureButtonBindings(driver, operator);
+
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Leave Line", leaveline);
     m_chooser.addOption("Foward And Turn Around", fowardAndTurnAround);
 
     // Put the chooser on the dashboard
     Shuffleboard.getTab("Autonomous").add(m_chooser);
+  }
+
+  private void configureButtonBindings(XboxController driver, XboxController operator) {
+    // turn 90º right
+    new JoystickButton(driver, Button.kBumperRight.value)
+        .whenPressed(new TurnToAngle(Math.PI / 2, false, this.drivetrain));
+
+    // turn 90º left
+    new JoystickButton(driver, Button.kBumperLeft.value)
+        .whenPressed(new TurnToAngle(-Math.PI / 2, false, this.drivetrain));
   }
 
   /**
