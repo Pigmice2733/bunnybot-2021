@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import com.pigmice.frc.robot.commands.subroutines.TurnToAngle;
+import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -36,7 +37,7 @@ public class Controls {
 
     public double driveSpeed() {
         double value = driver.getTriggerAxis(Hand.kRight) - driver.getTriggerAxis(Hand.kLeft);
-        return value / 4;
+        return value / (Drivetrain.getInstance().isBoosting() ? 1 : 4);
     }
 
     public boolean getYbutton() {

@@ -28,6 +28,8 @@ public class Drivetrain extends SubsystemBase {
     private double leftDemand, rightDemand;
     private double leftPosition, rightPosition, heading;
 
+    private boolean boost = false;
+
     private Odometry odometry;
 
     private AHRS navx;
@@ -89,7 +91,7 @@ public class Drivetrain extends SubsystemBase {
         // Used to be in initialize()
         leftPosition = 0.0;
         rightPosition = 0.0;
-        heading = 0.0;//0.5 * Math.PI;
+        heading = 0.0;// 0.5 * Math.PI;
         zeroHeading();
 
         leftEncoder.setPosition(0.0);
@@ -108,7 +110,7 @@ public class Drivetrain extends SubsystemBase {
         // from updateInputs
         leftPosition = leftEncoder.getPosition();
         rightPosition = rightEncoder.getPosition();
-        
+
         updateHeading();
 
         odometry.update(leftPosition, rightPosition, heading);
@@ -124,7 +126,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void updateDashboard() {
-        
+
     }
 
     public void updateHeading() {
@@ -145,6 +147,18 @@ public class Drivetrain extends SubsystemBase {
 
     public Pose getPose() {
         return odometry.getPose();
+    }
+
+    public void boost() {
+        this.boost = true;
+    }
+
+    public void stopBoost() {
+        this.boost = false;
+    }
+
+    public boolean isBoosting() {
+        return this.boost;
     }
 
     public void tankDrive(double leftSpeed, double rightSpeed) {
@@ -194,12 +208,12 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void test(double time) {
-        if(time < 0.1) {
+        if (time < 0.1) {
             navxTestAngle = navx.getAngle();
             navxTestPassed = false;
         }
 
-        if(!navxTestPassed) {
+        if (!navxTestPassed) {
             navxTestPassed = navx.getAngle() != navxTestAngle;
         }
 

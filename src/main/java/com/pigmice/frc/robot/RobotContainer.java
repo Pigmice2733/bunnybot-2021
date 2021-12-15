@@ -18,10 +18,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -75,6 +78,10 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings(XboxController driver, XboxController operator) {
+    // turbo mode
+    new JoystickButton(driver, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> drivetrain.boost()))
+        .whenReleased(new InstantCommand(() -> drivetrain.stopBoost()));
     // turn 90º right
     new JoystickButton(driver, Button.kBumperRight.value)
         .whenPressed(new TurnToAngle(Math.PI / 2, false, this.drivetrain));
