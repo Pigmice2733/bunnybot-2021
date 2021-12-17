@@ -11,6 +11,7 @@ import com.pigmice.frc.robot.commands.subroutines.ArcadeDrive;
 import com.pigmice.frc.robot.commands.subroutines.TurnToAngle;
 //Subsystem imports
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
+import com.pigmice.frc.robot.subsystems.impl.Intake;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
@@ -37,6 +38,7 @@ import java.util.List;
 public class RobotContainer {
 
   private Drivetrain drivetrain;
+  private Intake intake;
 
   final List<SubsystemBase> subsystems = new ArrayList<>();
 
@@ -56,7 +58,8 @@ public class RobotContainer {
     controls = new Controls(driver, operator);
 
     this.drivetrain = Drivetrain.getInstance();
-    subsystems.add(drivetrain);
+    this.intake = Intake.getInstance();
+    subsystems.addAll(Arrays.asList(drivetrain, intake));
 
     Command leaveline = new LeaveLine(drivetrain);
     Command fowardAndTurnAround = new ForwardAndTurnAround(drivetrain);
@@ -78,6 +81,12 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings(XboxController driver, XboxController operator) {
+    // toggle intake and color sorter
+    new JoystickButton(operator, Button.kBumperLeft.value)
+        .whenPressed(new InstantCommand(() -> {
+          this.intake.toggle();
+          // TODO toggle color sorter
+        }));
     // turbo mode
     new JoystickButton(driver, Button.kA.value)
         .whenPressed(new InstantCommand(() -> drivetrain.boost()))
