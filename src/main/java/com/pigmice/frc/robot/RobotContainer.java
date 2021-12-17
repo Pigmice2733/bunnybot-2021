@@ -8,8 +8,10 @@ package com.pigmice.frc.robot;
 import com.pigmice.frc.robot.commands.routines.ForwardAndTurnAround;
 import com.pigmice.frc.robot.commands.routines.LeaveLine;
 import com.pigmice.frc.robot.commands.subroutines.ArcadeDrive;
+import com.pigmice.frc.robot.commands.subroutines.TurnToAngle;
 //Subsystem imports
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
+import com.pigmice.frc.robot.subsystems.impl.Intake;
 
 import static edu.wpi.first.wpilibj.XboxController.Button;
 
@@ -17,10 +19,13 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,6 +38,7 @@ import java.util.List;
 public class RobotContainer {
 
   private Drivetrain drivetrain;
+  private Intake intake;
 
   final List<SubsystemBase> subsystems = new ArrayList<>();
 
@@ -40,14 +46,20 @@ public class RobotContainer {
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   // Initializing both controllers
-  final Controls controls = new Controls();
+  final Controls controls;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    XboxController driver = new XboxController(0);
+    XboxController operator = new XboxController(1);
+
+    controls = new Controls(driver, operator);
+
     this.drivetrain = Drivetrain.getInstance();
-    subsystems.add(drivetrain);
+    this.intake = Intake.getInstance();
+    subsystems.addAll(Arrays.asList(drivetrain, intake));
 
     Command leaveline = new LeaveLine(drivetrain);
     Command fowardAndTurnAround = new ForwardAndTurnAround(drivetrain);
@@ -58,12 +70,34 @@ public class RobotContainer {
     // Set the default drive command to split-stick arcade drive
     drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::driveSpeed, controls::turnSpeed));
 
+    configureButtonBindings(driver, operator);
+
     // Add commands to the autonomous command chooser
     m_chooser.setDefaultOption("Leave Line", leaveline);
     m_chooser.addOption("Foward And Turn Around", fowardAndTurnAround);
 
     // Put the chooser on the dashboard
     Shuffleboard.getTab("Autonomous").add(m_chooser);
+  }
+
+  private void configureButtonBindings(XboxController driver, XboxController operator) {
+    // toggle intake and color sorter
+    new JoystickButton(operator, Button.kBumperLeft.value)
+        .whenPressed(new InstantCommand(() -> {
+          this.intake.toggle();
+          // TODO toggle color sorter
+        }));
+    // turbo mode
+    new JoystickButton(driver, Button.kA.value)
+        .whenPressed(new InstantCommand(() -> drivetrain.boost()))
+        .whenReleased(new InstantCommand(() -> drivetrain.stopBoost()));
+    // turn 90º right
+    new JoystickButton(driver, Button.kBumperRight.value)
+        .whenPressed(new TurnToAngle(Math.PI / 2, false, this.drivetrain));
+
+    // turn 90º left
+    new JoystickButton(driver, Button.kBumperLeft.value)
+        .whenPressed(new TurnToAngle(-Math.PI / 2, false, this.drivetrain));
   }
 
   /**

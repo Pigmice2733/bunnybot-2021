@@ -50,6 +50,9 @@ public class Robot extends TimedRobot {
 
     private Drivetrain drivetrain;
 
+    // TODO make this a SendableChooser so it can be set by the operators
+    public static Alliance ALLIANCE = Alliance.RED;
+
     @Override
     public void robotInit() {
         displayDeployTimestamp();
@@ -100,8 +103,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        robotContainer.controls.update();
-
         // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
         // subsystem.updateOutputs());
         // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
@@ -202,5 +203,9 @@ public class Robot extends TimedRobot {
         }
 
         timestampDisplay.forceSetString(properties.getProperty("DEPLOY_TIMESTAMP"));
+    }
+
+    enum Alliance {
+        RED, BLUE;
     }
 }
