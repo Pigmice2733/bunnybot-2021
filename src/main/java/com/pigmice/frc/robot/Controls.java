@@ -5,7 +5,9 @@ import com.pigmice.frc.lib.inputs.Toggle;
 import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -14,25 +16,26 @@ public class Controls {
         double driveSpeed();
 
         double turnSpeed();
+
         boolean getAButton();
-        
+
         double getLeft();
 
         double getRight();
     }
-    
-    //private interface OperatorProfile {
-    //    boolean intake();
-    //}
 
-    public static void bindTriggers(){
-        XboxController controller = new XboxController(0);
-        JoystickButton lbButton = new JoystickButton(controller, 4);
-        final ColorSorter sorterSubsystem = ColorSorter.getInstance();
-        lbButton.toggleWhenPressed(new RunCommand(sorterSubsystem::colorSort));
+    // private interface OperatorProfile {
+    // boolean intake();
+    // }
+
+    public static void bindTriggers() {
+        final XboxController controller = new XboxController(1);
+        JoystickButton XButton = new JoystickButton(controller, Button.kX.value);
+        final ColorSorter colorSorterSubsystem = ColorSorter.getInstance();
+        XButton.toggleWhenPressed(new InstantCommand(colorSorterSubsystem::toggle));
     }
 
-    private class EasySMX implements DriverProfile/*,OperatorProfile*/ {
+    private class EasySMX implements DriverProfile/* ,OperatorProfile */ {
         private final XboxController joystick;
 
         public EasySMX(XboxController joystick) {
@@ -49,7 +52,7 @@ public class Controls {
             return joystick.getX(Hand.kRight) / 2;
         }
 
-        @Override 
+        @Override
         public boolean getAButton() {
             return joystick.getAButtonPressed();
         }
@@ -65,7 +68,7 @@ public class Controls {
         }
     }
 
-    private class XBox implements DriverProfile/*,OperatorProfile*/ {
+    private class XBox implements DriverProfile/* ,OperatorProfile */ {
         private final XboxController joystick;
 
         public XBox(XboxController joystick) {
@@ -99,7 +102,7 @@ public class Controls {
     }
 
     DriverProfile driver;
-    //OperatorProfile operator;
+    // OperatorProfile operator;
 
     public Controls() {
         XboxController driverJoystick = new XboxController(0);
@@ -111,20 +114,23 @@ public class Controls {
         } else {
             driver = new XBox(driverJoystick);
         }
-        /*  if (operatorJoystick.getName().equals("EasySMX CONTROLLER")) {
-            operator = new EasySMX(operatorJoystick);
-        } else if (operatorJoystick.getName().equals("Controller (XBOX 360 For Windows)")) {
-            operator = new XBox(operatorJoystick);
-        } else {
-            operator = new XBox(operatorJoystick);
-        } */
+        /*
+         * if (operatorJoystick.getName().equals("EasySMX CONTROLLER")) {
+         * operator = new EasySMX(operatorJoystick);
+         * } else if
+         * (operatorJoystick.getName().equals("Controller (XBOX 360 For Windows)")) {
+         * operator = new XBox(operatorJoystick);
+         * } else {
+         * operator = new XBox(operatorJoystick);
+         * }
+         */
     }
 
     public void initialize() {
     }
 
     public void update() {
-        
+
     }
 
     public double turnSpeed() {
@@ -136,11 +142,13 @@ public class Controls {
         double value = driver.driveSpeed();
         return Math.abs(value) < 0.2 ? 0 : -value / 4;
     }
-    
-    /*public boolean intake() {
-        return operator.intake();
-    } */
-    
+
+    /*
+     * public boolean intake() {
+     * return operator.intake();
+     * }
+     */
+
     public boolean getAButton() {
         return driver.getAButton();
     }

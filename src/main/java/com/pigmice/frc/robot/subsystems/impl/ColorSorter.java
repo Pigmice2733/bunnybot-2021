@@ -19,6 +19,7 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3.RawColor;
 
 public class ColorSorter extends SubsystemBase {
+  private boolean enabled = false;
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
   final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
   final TalonSRX colorSensorMotor = new TalonSRX(SystemConfig.ColorSorterConfiguration.colorSensorMotorPort);
@@ -82,5 +83,17 @@ public class ColorSorter extends SubsystemBase {
       SmartDashboard.putBoolean("Red Detected", false);
       SmartDashboard.putBoolean("Blue Detected", false);
     }
+  }
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  public void toggle() {
+    this.setEnabled(!this.enabled);
   }
 }
