@@ -88,7 +88,7 @@ public class RobotContainer {
           // TODO toggle color sorter
         }));
     // turbo mode
-    new JoystickButton(driver, Button.kA.value)
+    new JoystickButton(driver, Button.kB.value)
         .whenPressed(new InstantCommand(() -> drivetrain.boost()))
         .whenReleased(new InstantCommand(() -> drivetrain.stopBoost()));
     // turn 90º right
