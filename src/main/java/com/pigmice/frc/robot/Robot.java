@@ -12,6 +12,10 @@ import java.util.List;
 import java.util.Properties;
 
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
+import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -49,6 +53,7 @@ public class Robot extends TimedRobot {
     private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
 
     private Drivetrain drivetrain;
+    private ColorSorter colorSorter;
 
     // TODO make this a SendableChooser so it can be set by the operators
     public static Alliance ALLIANCE = Alliance.RED;
@@ -62,6 +67,7 @@ public class Robot extends TimedRobot {
         robotContainer = new RobotContainer();
 
         this.drivetrain = Drivetrain.getInstance();
+        this.colorSorter = ColorSorter.getInstance();
 
         // m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes13bit,
         // ColorSensorMeasurementRate.kColorRate50ms, GainFactor.kGain1x);
@@ -135,47 +141,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        /**
-         * The method GetColor() returns a normalized color value from the sensor and
-         * can be useful if outputting the color to an RGB LED or similar. To read the
-         * raw color, use GetRawColor().
-         * 
-         * The color sensor works best when within a few inches from an object in well
-         * lit conditions (the built in LED is a big help here!). The farther an object
-         * is the more light from the surroundings will bleed into the measurements and
-         * make it difficult to accurately determine its color.
-         */
-        // RawColor detectedColor = m_colorSensor.getRawColor();
 
-        /**
-         * The sensor returns a raw IR value of the infrared light detected.
-         */
-        // double IR = m_colorSensor.getIR();
-
-        /**
-         * Open Smart Dashboard or Shuffleboard to see the color detected by the sensor.
-         */
-        // SmartDashboard.putNumber("Red", detectedColor.red);
-        // SmartDashboard.putNumber("Green", detectedColor.green);
-        // SmartDashboard.putNumber("Blue", detectedColor.blue);
-        // SmartDashboard.putNumber("IR", IR);
-
-        // ColorMatchResult result = ColorMatch.makeColor(0.25, 0.5, 0.45);
-
-        /**
-         * In addition to RGB IR values, the color sensor can also return an infrared
-         * proximity value. The chip contains an IR led which will emit IR pulses and
-         * measure the intensity of the return. When an object is close the value of the
-         * proximity will be large (max 2047 with default settings) and will approach
-         * zero when the object is far away.
-         * 
-         * Proximity can be used to roughly approximate the distance of an object or
-         * provide a threshold for when an object is close enough to provide accurate
-         * color values.
-         */
-        // int proximity = m_colorSensor.getProximity();
-
-        // SmartDashboard.putNumber("Proximity", proximity);
         // Runs the Scheduler. This is responsible for polling buttons, adding
         // newly-scheduled
         // commands, running already-scheduled commands, removing finished or

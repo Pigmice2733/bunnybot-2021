@@ -8,7 +8,9 @@ package com.pigmice.frc.robot;
 import com.pigmice.frc.robot.commands.routines.ForwardAndTurnAround;
 import com.pigmice.frc.robot.commands.routines.LeaveLine;
 import com.pigmice.frc.robot.commands.subroutines.ArcadeDrive;
+import com.pigmice.frc.robot.commands.subroutines.ColorSort;
 import com.pigmice.frc.robot.commands.subroutines.TurnToAngle;
+import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
 //Subsystem imports
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 import com.pigmice.frc.robot.subsystems.impl.Intake;
@@ -40,6 +42,8 @@ public class RobotContainer {
   private Drivetrain drivetrain;
   private Intake intake;
 
+  private ColorSorter colorSorter;
+
   final List<SubsystemBase> subsystems = new ArrayList<>();
 
   // A chooser for autonomous commands
@@ -61,6 +65,9 @@ public class RobotContainer {
     this.intake = Intake.getInstance();
     subsystems.addAll(Arrays.asList(drivetrain, intake));
 
+    this.colorSorter = ColorSorter.getInstance();
+    subsystems.add(colorSorter);
+
     Command leaveline = new LeaveLine(drivetrain);
     Command fowardAndTurnAround = new ForwardAndTurnAround(drivetrain);
 
@@ -69,6 +76,7 @@ public class RobotContainer {
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
     drivetrain.setDefaultCommand(new ArcadeDrive(drivetrain, controls::driveSpeed, controls::turnSpeed));
+    colorSorter.setDefaultCommand(new ColorSort(colorSorter));
 
     configureButtonBindings(driver, operator);
 
