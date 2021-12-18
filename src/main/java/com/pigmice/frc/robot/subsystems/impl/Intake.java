@@ -49,7 +49,7 @@ public class Intake extends SubsystemBase {
         if (this.enabled) {
             bottomMotor.set(TalonSRXControlMode.PercentOutput, speed);
             bandMotor.set(TalonSRXControlMode.PercentOutput, speed);
-            topMotor.set(TalonSRXControlMode.PercentOutput, speed);
+            topMotor.set(TalonSRXControlMode.PercentOutput, speed/2);
         } else {
             bottomMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
             bandMotor.set(TalonSRXControlMode.PercentOutput, 0.0);

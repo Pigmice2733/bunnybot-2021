@@ -9,6 +9,6 @@ right bumper RB (press) - turn right 90 degrees
 left bumper LB (press) - turn left 90 degrees
 
 XBOX CONTROLLER 1 (operator)
-A button AND right bumper RB (press at the same time) - open dispenser
-B button (press) - close dispenser
+A button AND right bumper RB (press at the same time) - toggle dispenser open/close
+B button (hold) - override color sorter and pick up any ball
 X button (press) - initialize Intake and ColorSorter
