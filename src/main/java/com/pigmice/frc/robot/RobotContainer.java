@@ -94,33 +94,36 @@ public class RobotContainer {
     // OPERATOR
     // toggle intake and color sorter [X Button]
     new JoystickButton(operator, Button.kX.value)
-      .whenPressed(new InstantCommand(() -> {
-        this.intake.toggle();
-        this.colorSorter.toggle();
-    }));
-    // open dispenser [A Button and Right Bumper]
+        .whenPressed(new InstantCommand(() -> {
+          this.intake.toggle();
+          this.colorSorter.toggle();
+        }));
+    // toggle dispenser [A Button and Right Bumper]
     new JoystickButton(operator, Button.kA.value)
-      .and(new JoystickButton(operator, Button.kBumperRight.value))
-      .whenActive(new InstantCommand(dispenser::open));
-    // close dispenser [B Button]
+        .and(new JoystickButton(operator, Button.kBumperRight.value))
+        .whenActive(new InstantCommand(() -> {
+          dispenser.toggle();
+        }));
+    // override color sorter to intake balls [B Button]
     new JoystickButton(operator, Button.kB.value)
-      .whenPressed(new InstantCommand(dispenser::close));
-    
+        .whenPressed(new InstantCommand(colorSorter::enableOverride))
+        .whenReleased(new InstantCommand(colorSorter::disableOverride));
+
     // DRIVER
     // turbo mode [B Button]
     new JoystickButton(driver, Button.kB.value)
-      .whenPressed(new InstantCommand(drivetrain::boost))
-      .whenReleased(new InstantCommand(drivetrain::stopBoost));
+        .whenPressed(new InstantCommand(drivetrain::boost))
+        .whenReleased(new InstantCommand(drivetrain::stopBoost));
     // slow mode [A Button]
     new JoystickButton(driver, Button.kA.value)
-      .whenPressed(new InstantCommand(drivetrain::slow))
-      .whenReleased(new InstantCommand(drivetrain::stopBoost));
+        .whenPressed(new InstantCommand(drivetrain::slow))
+        .whenReleased(new InstantCommand(drivetrain::stopBoost));
     // turn 90º right [Right Bumper]
     new JoystickButton(driver, Button.kBumperRight.value)
-      .whenPressed(new TurnToAngle(Math.PI / 2, false, this.drivetrain));
+        .whenPressed(new TurnToAngle(Math.PI / 2, false, this.drivetrain));
     // turn 90º left [Left Bumper]
     new JoystickButton(driver, Button.kBumperLeft.value)
-      .whenPressed(new TurnToAngle(Math.PI / -2, false, this.drivetrain));
+        .whenPressed(new TurnToAngle(Math.PI / -2, false, this.drivetrain));
   }
 
   /**

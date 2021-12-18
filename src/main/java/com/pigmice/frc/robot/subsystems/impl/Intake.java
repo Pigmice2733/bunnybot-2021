@@ -7,9 +7,9 @@ import com.pigmice.frc.robot.subsystems.SystemConfig.IntakeConfiguration;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-    private TalonSRX leftMotor, rightMotor, topMotor;
+    private TalonSRX bottomMotor, bandMotor, topMotor;
     private boolean enabled = false;
-    private final double speed = 0.3;
+    private final double speed = 0.5;
     private static Intake instance = null;
 
     public static Intake getInstance() {
@@ -21,11 +21,10 @@ public class Intake extends SubsystemBase {
     }
 
     public Intake() {
-        leftMotor = new TalonSRX(IntakeConfiguration.leftMotorPort);
-        leftMotor.setInverted(true);
-        rightMotor = new TalonSRX(IntakeConfiguration.rightMotorPort);
-        // rightMotor.set(TalonSRXControlMode.Follower,
-        // IntakeConfiguration.leftMotorPort);
+        bottomMotor = new TalonSRX(IntakeConfiguration.bottomMotorPort);
+        bottomMotor.setInverted(true);
+        bandMotor = new TalonSRX(IntakeConfiguration.bandMotorPort);
+        bandMotor.setInverted(true);
         topMotor = new TalonSRX(IntakeConfiguration.topMotorPort);
     }
 
@@ -48,12 +47,12 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         if (this.enabled) {
-            leftMotor.set(TalonSRXControlMode.PercentOutput, speed);
-            rightMotor.set(TalonSRXControlMode.PercentOutput, speed);
+            bottomMotor.set(TalonSRXControlMode.PercentOutput, speed);
+            bandMotor.set(TalonSRXControlMode.PercentOutput, speed);
             topMotor.set(TalonSRXControlMode.PercentOutput, speed);
         } else {
-            leftMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
-            rightMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
+            bottomMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
+            bandMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
             topMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
         }
     }

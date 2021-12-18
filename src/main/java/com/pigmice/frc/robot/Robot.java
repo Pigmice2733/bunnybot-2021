@@ -6,30 +6,19 @@ package com.pigmice.frc.robot;
 
 import java.io.FileInputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
-import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
-import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorSensorV3.RawColor;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -45,18 +34,7 @@ public class Robot extends TimedRobot {
 
     private RobotContainer robotContainer;
 
-    private double testStartTime;
-
-    // Color Sensor
-    private final I2C.Port i2cPort = I2C.Port.kOnboard;
-
-    private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
-
     private Drivetrain drivetrain;
-    private ColorSorter colorSorter;
-
-    // TODO make this a SendableChooser so it can be set by the operators
-    public static Alliance ALLIANCE = Alliance.RED;
 
     @Override
     public void robotInit() {
@@ -67,7 +45,6 @@ public class Robot extends TimedRobot {
         robotContainer = new RobotContainer();
 
         this.drivetrain = Drivetrain.getInstance();
-        this.colorSorter = ColorSorter.getInstance();
 
         // m_colorSensor.configureColorSensor(ColorSensorResolution.kColorSensorRes13bit,
         // ColorSensorMeasurementRate.kColorRate50ms, GainFactor.kGain1x);
@@ -101,7 +78,6 @@ public class Robot extends TimedRobot {
         drivetrain.setCoastMode(false);
         // robotContainer.subsystems.forEach((RobotSubsystem subsystem) ->
         // subsystem.initialize());
-        SmartDashboard.putBoolean("button", false);
 
         if (autonomousCommand != null)
             autonomousCommand.cancel();
@@ -117,7 +93,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        testStartTime = Timer.getFPGATimestamp();
     }
 
     @Override

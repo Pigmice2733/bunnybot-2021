@@ -14,12 +14,14 @@ public class Controls {
         this.operator = operator;
     }
 
-    public void bindDriverControls() {}
+    public void bindDriverControls() {
+    }
 
-    public void bindOperatorControls() {}
+    public void bindOperatorControls() {
+    }
 
     public double turnSpeed() {
-        double epsilon = 0.1;
+        double epsilon = 0.2;
 
         double left = driver.getX(Hand.kLeft);
         left = Math.abs(left) > epsilon ? left : 0;
@@ -31,7 +33,9 @@ public class Controls {
     }
 
     public double driveSpeed() {
+        double deadzone = 0.1;
         double value = driver.getTriggerAxis(Hand.kRight) - driver.getTriggerAxis(Hand.kLeft);
+        value = Math.abs(value) > deadzone ? value : 0;
         Drivetrain drivetrain = Drivetrain.getInstance();
         return value * (drivetrain.isBoosting() ? 1 : drivetrain.isSlow() ? 0.09375 : 0.25);
     }

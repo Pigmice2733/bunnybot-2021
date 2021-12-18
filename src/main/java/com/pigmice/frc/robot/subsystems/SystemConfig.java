@@ -21,16 +21,16 @@ public class SystemConfig {
 
     public static class ColorSorterConfiguration {
         public static final int colorSensorMotorPort = 6;
-        public static final double colorSensorMotorSpeed = 0.1;
-        public static final boolean redBallsWanted = true;
+        public static final double colorSensorMotorSpeed = 0.2;
     }
+
     public static class IntakeConfiguration {
-        public static final int leftMotorPort = 7;
-        public static final int rightMotorPort = 8;
+        public static final int bottomMotorPort = 7;
+        public static final int bandMotorPort = 8;
         public static final int topMotorPort = 5;
     }
-    
+
     public static class DispenserConfiguration {
-        public static final int[] DispenserSolenoidPorts = new int[] {0,1}; //SUBJECT TO CHANGE
+        public static final int[] DispenserSolenoidPorts = new int[] { 0, 1 }; // SUBJECT TO CHANGE
     }
 }

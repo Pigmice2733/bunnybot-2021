@@ -161,7 +161,7 @@ public class Drivetrain extends SubsystemBase {
     public boolean isBoosting() {
         return this.boost;
     }
-    
+
     public void slow() {
         this.slow = true;
     }
@@ -173,6 +173,7 @@ public class Drivetrain extends SubsystemBase {
     public boolean isSlow() {
         return this.slow;
     }
+
     public void tankDrive(double leftSpeed, double rightSpeed) {
         leftDemand = leftSpeed;
         rightDemand = rightSpeed;
@@ -184,7 +185,6 @@ public class Drivetrain extends SubsystemBase {
         leftDemand = forwardSpeed + turnSpeed;
         rightDemand = forwardSpeed - turnSpeed;
 
-        System.out.println("LEFT DEMAND: " + leftDemand + " | RIGHT DEMAND: " + rightDemand);
         updateOutputs();
     }
 

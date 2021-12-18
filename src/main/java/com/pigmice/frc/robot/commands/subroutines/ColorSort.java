@@ -20,12 +20,17 @@ public class ColorSort extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+    m_colorSorter.setEnabled(true);
+  }
+
+  @Override
+  public void end(boolean interruptible) {
+    m_colorSorter.setEnabled(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_colorSorter.colorSort();
+    // m_colorSorter.colorSort();
   }
 }
