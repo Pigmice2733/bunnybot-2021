@@ -1,0 +1,14 @@
+XBOX CONTROLLER 0 (driver)
+right trigger RT (axis) - move forwards
+left trigger LT (axis) - move backwards
+right stick (x-axis) - turn fast
+left stick (x-axis) - turn slow
+A button (hold while RT/LT) - half speed
+B button (hold while RT/LT) - max motor speed
+right bumper RB (press) - turn right 90 degrees
+left bumper LB (press) - turn left 90 degrees
+
+XBOX CONTROLLER 1 (operator)
+A button AND right bumper RB (press at the same time) - open dispenser
+B button (press) - close dispenser
+X button (press) - initialize Intake and ColorSorter
