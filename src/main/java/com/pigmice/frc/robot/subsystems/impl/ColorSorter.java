@@ -21,8 +21,8 @@ import com.revrobotics.ColorSensorV3.RawColor;
 public class ColorSorter extends SubsystemBase {
   private boolean enabled = false;
   private final I2C.Port i2cPort = I2C.Port.kOnboard;
-  final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
-  final TalonSRX colorSensorMotor = new TalonSRX(SystemConfig.ColorSorterConfiguration.colorSensorMotorPort);
+  private ColorSensorV3 colorSensor;
+  private TalonSRX colorSensorMotor;
 
   // Scales needed to trigger motor
   private static double generalSensitivity = 1;
@@ -48,7 +48,13 @@ public class ColorSorter extends SubsystemBase {
 
   /** Creates a new ColorSorter. */
   public ColorSorter() {
-    colorSensorMotor.setInverted(SystemConfig.ColorSorterConfiguration.redBallsWanted);
+    try {
+      this.colorSensor = new ColorSensorV3(i2cPort);
+      this.colorSensorMotor = new TalonSRX(SystemConfig.ColorSorterConfiguration.colorSensorMotorPort);
+      colorSensorMotor.setInverted(SystemConfig.ColorSorterConfiguration.redBallsWanted);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -57,6 +63,9 @@ public class ColorSorter extends SubsystemBase {
   }
 
   public void colorSort() {
+    if (!this.isEnabled() || this.colorSensor == null || this.colorSensorMotor == null) {
+      return;
+    }
 
     detectedColor = colorSensor.getRawColor();
 

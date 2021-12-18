@@ -9,18 +9,31 @@ public class TurnToAngle extends PIDCommand {
     private final double maxError = 0.02;
     private final double maxTurnSpeed = 0.25 * Math.PI;
 
+    private final static double turnP = 1.0D;
+    private final static double turnI = 0.0D;
+    private final static double turnD = 0.0D;
+
     public TurnToAngle(double targetHeading, boolean absolute, Drivetrain drivetrain) {
         super(
-            new PIDController(0.0, 0.0, 0.0),
-            drivetrain::getHeading,
-            absolute ? targetHeading : targetHeading + drivetrain.getHeading(),
-            output -> drivetrain.arcadeDrive(0, output),
-            drivetrain
-        );
+                new PIDController(turnP, turnI, turnD),
+                drivetrain::getHeading,
+                absolute ? targetHeading : targetHeading + drivetrain.getHeading(),
+                output -> drivetrain.arcadeDrive(0, output),
+                drivetrain);
 
-        getController().enableContinuousInput(-180, 180);
+        getController().enableContinuousInput(-Math.PI, Math.PI);
 
         getController().setTolerance(maxError, maxTurnSpeed);
+    }
+
+    @Override
+    public void execute() {
+        // System.out.println("TURNING TO ANGLE");
+        try {
+            super.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

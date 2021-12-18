@@ -6,8 +6,8 @@ public class SystemConfig {
     public static class DrivetrainConfiguration {
         public static final int frontRightMotorPort = 1;
         public static final int backRightMotorPort = 2;
-        public static final int frontLeftMotorPort = 3;
-        public static final int backLeftMotorPort = 4;
+        public static final int frontLeftMotorPort = 4;
+        public static final int backLeftMotorPort = 3;
 
         public static final SPI.Port navxPort = SPI.Port.kMXP;
 
@@ -20,13 +20,14 @@ public class SystemConfig {
     }
 
     public static class ColorSorterConfiguration {
-        public static final int colorSensorMotorPort = 1;
+        public static final int colorSensorMotorPort = 6;
         public static final double colorSensorMotorSpeed = 0.1;
         public static final boolean redBallsWanted = true;
     }
     public static class IntakeConfiguration {
-        public static final int leftMotorPort = 5;
-        public static final int rightMotorPort = 6;
+        public static final int leftMotorPort = 7;
+        public static final int rightMotorPort = 8;
+        public static final int topMotorPort = 5;
     }
     
     public static class DispenserConfiguration {

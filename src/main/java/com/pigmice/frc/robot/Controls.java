@@ -1,22 +1,15 @@
 package com.pigmice.frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-// import edu.wpi.first.wpilibj.XboxController.Button;
-// import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
 import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
-// import com.pigmice.frc.lib.inputs.Debouncer;
-// import com.pigmice.frc.lib.inputs.Toggle;
 import com.pigmice.frc.robot.subsystems.impl.Intake;
 import com.pigmice.frc.robot.subsystems.impl.Dispenser;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-// import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj.XboxController;
-// import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 
 public class Controls {
     private XboxController driver;
@@ -34,7 +27,8 @@ public class Controls {
     // boolean intake();
     // }
 
-    public void bindDriverControls() {}
+    public void bindDriverControls() {
+    }
 
     public void bindOperatorControls() {
         final XboxController controller = new XboxController(1);
@@ -55,18 +49,20 @@ public class Controls {
 
     public double turnSpeed() {
         double epsilon = 0.1;
+
         double left = driver.getX(Hand.kLeft);
-        left = Math.abs(left) > epsilon ? left : 0d;
+        left = Math.abs(left) > epsilon ? left : 0;
+
         double right = driver.getX(Hand.kRight);
-        right = Math.abs(right) > epsilon ? right : 0d;
-        return (left != 0 ? left / 4 : right) / 4;
+        right = Math.abs(right) > epsilon ? right : 0;
+
+        return (right != 0 ? right / 4 : left) / 4;
     }
 
     public double driveSpeed() {
         double value = driver.getTriggerAxis(Hand.kRight) - driver.getTriggerAxis(Hand.kLeft);
-        boolean lowSpeed = driver.getAButton();
-        value *= lowSpeed ? 0.375 : 1;
-        return value / (Drivetrain.getInstance().isBoosting() ? 1 : 4);
+        Drivetrain drivetrain = Drivetrain.getInstance();
+        return value * (drivetrain.isBoosting() ? 1 : drivetrain.isSlow() ? 0.375 : 0.25);
     }
 
     /*
