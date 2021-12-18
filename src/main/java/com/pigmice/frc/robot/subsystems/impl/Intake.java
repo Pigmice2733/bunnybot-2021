@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Intake extends SubsystemBase {
     private TalonSRX bottomMotor, bandMotor, topMotor;
     private boolean enabled = false;
-    private final double speed = 0.5;
+    private final double speed = 0.25;
     private static Intake instance = null;
 
     public static Intake getInstance() {
@@ -47,9 +47,9 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         if (this.enabled) {
-            bottomMotor.set(TalonSRXControlMode.PercentOutput, speed);
-            bandMotor.set(TalonSRXControlMode.PercentOutput, speed);
-            topMotor.set(TalonSRXControlMode.PercentOutput, speed/2);
+            bottomMotor.set(TalonSRXControlMode.PercentOutput, speed*2);
+            bandMotor.set(TalonSRXControlMode.PercentOutput, speed*3);
+            topMotor.set(TalonSRXControlMode.PercentOutput, speed);
         } else {
             bottomMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
             bandMotor.set(TalonSRXControlMode.PercentOutput, 0.0);
