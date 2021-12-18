@@ -9,6 +9,7 @@ import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 // import com.pigmice.frc.lib.inputs.Debouncer;
 // import com.pigmice.frc.lib.inputs.Toggle;
 import com.pigmice.frc.robot.subsystems.impl.Intake;
+import com.pigmice.frc.robot.subsystems.impl.Dispenser;
 
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,9 +30,11 @@ public class Controls {
         this.bindOperatorControls();
     }
 
-    public void bindDriverControls() {
+    // private interface OperatorProfile {
+    // boolean intake();
+    // }
 
-    }
+    public void bindDriverControls() {}
 
     public void bindOperatorControls() {
         final XboxController controller = new XboxController(1);
@@ -42,6 +45,12 @@ public class Controls {
             intakeSubsystem.toggle();
             colorSorterSubsystem.toggle();
         }));
+        final JoystickButton AButton = new JoystickButton(controller, Button.kA.value);
+        final JoystickButton RBumper = new JoystickButton(controller, Button.kBumperRight.value);
+        final JoystickButton BButton = new JoystickButton(controller, Button.kB.value);
+        final Dispenser dispenserSubsystem = Dispenser.getInstance();
+        AButton.and(RBumper).whenActive(new InstantCommand(dispenserSubsystem::open));
+        BButton.whenPressed(new InstantCommand(dispenserSubsystem::close));
     }
 
     public double turnSpeed() {

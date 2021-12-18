@@ -24,9 +24,12 @@ public class SystemConfig {
         public static final double colorSensorMotorSpeed = 0.1;
         public static final boolean redBallsWanted = true;
     }
-
     public static class IntakeConfiguration {
         public static final int leftMotorPort = 5;
         public static final int rightMotorPort = 6;
+    }
+    
+    public static class DispenserConfiguration {
+        public static final int[] DispenserSolenoidPorts = new int[] {0,1}; //SUBJECT TO CHANGE
     }
 }

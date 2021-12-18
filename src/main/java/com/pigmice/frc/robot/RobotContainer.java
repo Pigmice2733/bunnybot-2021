@@ -10,8 +10,9 @@ import com.pigmice.frc.robot.commands.routines.LeaveLine;
 import com.pigmice.frc.robot.commands.subroutines.ArcadeDrive;
 import com.pigmice.frc.robot.commands.subroutines.ColorSort;
 import com.pigmice.frc.robot.commands.subroutines.TurnToAngle;
-import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
 //Subsystem imports
+import com.pigmice.frc.robot.subsystems.impl.ColorSorter;
+import com.pigmice.frc.robot.subsystems.impl.Dispenser;
 import com.pigmice.frc.robot.subsystems.impl.Drivetrain;
 import com.pigmice.frc.robot.subsystems.impl.Intake;
 
@@ -41,8 +42,8 @@ public class RobotContainer {
 
   private Drivetrain drivetrain;
   private Intake intake;
-
   private ColorSorter colorSorter;
+  private Dispenser dispenser;
 
   final List<SubsystemBase> subsystems = new ArrayList<>();
 
@@ -67,6 +68,9 @@ public class RobotContainer {
 
     this.colorSorter = ColorSorter.getInstance();
     subsystems.add(colorSorter);
+
+    this.dispenser = Dispenser.getInstance();
+    subsystems.add(dispenser);
 
     Command leaveline = new LeaveLine(drivetrain);
     Command fowardAndTurnAround = new ForwardAndTurnAround(drivetrain);
