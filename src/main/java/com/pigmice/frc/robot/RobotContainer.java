@@ -91,27 +91,36 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings(XboxController driver, XboxController operator) {
+    // OPERATOR
     // toggle intake and color sorter [X Button]
-    JoystickButton XButton = new JoystickButton(operator, Button.kX.value);
-    XButton.toggleWhenPressed(new InstantCommand(() -> {
-      this.intake.toggle();
-      this.colorSorter.toggle();
+    new JoystickButton(operator, Button.kX.value)
+      .whenPressed(new InstantCommand(() -> {
+        this.intake.toggle();
+        this.colorSorter.toggle();
     }));
+    // open dispenser [A Button and Right Bumper]
+    new JoystickButton(operator, Button.kA.value)
+      .and(new JoystickButton(operator, Button.kBumperRight.value))
+      .whenActive(new InstantCommand(dispenser::open));
+    // close dispenser [B Button]
+    new JoystickButton(operator, Button.kB.value)
+      .whenPressed(new InstantCommand(dispenser::close));
+    
+    // DRIVER
     // turbo mode [B Button]
     new JoystickButton(driver, Button.kB.value)
-        .whenPressed(new InstantCommand(drivetrain::boost))
-        .whenReleased(new InstantCommand(drivetrain::stopBoost));
+      .whenPressed(new InstantCommand(drivetrain::boost))
+      .whenReleased(new InstantCommand(drivetrain::stopBoost));
     // slow mode [A Button]
     new JoystickButton(driver, Button.kA.value)
-        .whenPressed(new InstantCommand(drivetrain::slow))
-        .whenReleased(new InstantCommand(drivetrain::stopBoost));
+      .whenPressed(new InstantCommand(drivetrain::slow))
+      .whenReleased(new InstantCommand(drivetrain::stopBoost));
     // turn 90º right [Right Bumper]
     new JoystickButton(driver, Button.kBumperRight.value)
-        .whenPressed(new TurnToAngle(Math.PI / 2, false, this.drivetrain));
-
+      .whenPressed(new TurnToAngle(Math.PI / 2, false, this.drivetrain));
     // turn 90º left [Left Bumper]
     new JoystickButton(driver, Button.kBumperLeft.value)
-        .whenPressed(new TurnToAngle(-Math.PI / 2, false, this.drivetrain));
+      .whenPressed(new TurnToAngle(Math.PI / -2, false, this.drivetrain));
   }
 
   /**
